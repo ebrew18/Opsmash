@@ -198,7 +198,6 @@ let boardEl;
 let undoState = null; // snapshot for undo
 let moveHistory = []; // log of operations
 let showHistory = false; // toggle history panel
-let vibrateOn = true; // vibration toggle
 
 // ── Colors ──
 function numColor(v) {
@@ -503,15 +502,12 @@ function handleClick(r, c) {
           // Zero result: +1 point (even), show purple 0
           score++; pts = +1;
           showFloat(r, c, `0`, "float-zero", 22);
-          vibrate([30, 50, 30]);
         } else if (isEven) {
           score++; pts = +1;
           showFloat(r, c, `+1`, "float-plus", 18);
-          vibrate([40]);
         } else {
           score--; pts = -1;
           showFloat(r, c, `−1`, "float-minus", 18);
-          vibrate([80]);
         }
 
         showFloat(r, c, `${a} ${opSymbol} ${b} = ${absResult}`, "float-result", 13, -24);
@@ -522,7 +518,6 @@ function handleClick(r, c) {
         // Bad division or error — lose a point
         score--;
         showFloat(r, c, `−1`, "float-minus", 18);
-        vibrate([80]);
         grid[r][c] = { type: "operation", op: opSymbol };
         moveHistory.push({ type: "op", desc: `${a} ${opSymbol} ${b} = error`, points: -1, scoreAfter: score, even: false });
       }
@@ -555,6 +550,17 @@ function handleClick(r, c) {
 
   // Nothing selected
   if (cell.type === "number") {
+    // Continuous operation: check if this number is adjacent to a locked tile
+    for (const [dr, dc] of [[-1,0],[1,0],[0,-1],[0,1]]) {
+      const nr = r + dr, nc = c + dc;
+      if (nr >= 0 && nr < SIZE && nc >= 0 && nc < SIZE && grid[nr][nc].type === "locked") {
+        // Auto-complete: select this number, then trigger the locked tile
+        selected = { row: r, col: c };
+        handleClick(nr, nc);
+        return;
+      }
+    }
+    // No adjacent locked tile — normal select
     selected = { row: r, col: c };
     render();
   }
@@ -575,13 +581,6 @@ function getValidMoves() {
     }
   }
   return moves;
-}
-
-// ── Vibration ──
-function vibrate(pattern) {
-  if (vibrateOn && navigator.vibrate) {
-    navigator.vibrate(pattern);
-  }
 }
 
 // ── Floats ──
@@ -733,7 +732,6 @@ function render() {
   h += `<div class="action-row">
     <button class="btn-small ${undoState ? '' : 'disabled'}" onclick="undo()">↩ Undo</button>
     <button class="btn-small ${showHistory ? 'active' : ''}" onclick="showHistory=!showHistory;render();">📋 History</button>
-    <button class="btn-small ${vibrateOn ? 'active' : ''}" onclick="vibrateOn=!vibrateOn;render();">📳 Vibrate</button>
   </div>`;
 
   // History panel
