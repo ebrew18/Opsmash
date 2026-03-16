@@ -148,7 +148,7 @@ const CELL = Math.floor((vw - 3 * (SIZE + 1)) / SIZE);
 const BOARD_PX = CELL * SIZE + 3 * (SIZE + 1);
 
 // ── State ──
-let grid, selected, score, pointTarget, level, gameState;
+let grid, selected, score, pointTarget, level, gameState, opsUsed;
 let boardEl;
 
 // ── Colors ──
@@ -184,6 +184,7 @@ function initGame() {
   selected = null;
   score = 0;
   level = 1;
+  opsUsed = 0;
   pointTarget = POINT_TARGET;
   gameState = "menu";
   render();
@@ -198,6 +199,7 @@ function nextLevel() {
   level++;
   pointTarget = POINT_TARGET + (level - 1) * 5;
   score = 0;
+  opsUsed = 0;
   // Regenerate board
   for (let r = 0; r < SIZE; r++) {
     for (let c = 0; c < SIZE; c++) {
@@ -305,6 +307,53 @@ function fillEmptyCells() {
   }
 }
 
+// ── Loss detection: can any number reach an operation or locked tile? ──
+function canAnyOperate() {
+  for (let r = 0; r < SIZE; r++) {
+    for (let c = 0; c < SIZE; c++) {
+      if (grid[r][c].type !== "number") continue;
+      // Check if this number is adjacent to an op, locked, or blank/empty (could path to op)
+      for (const [dr, dc] of [[-1,0],[1,0],[0,-1],[0,1]]) {
+        const nr = r + dr, nc = c + dc;
+        if (nr < 0 || nr >= SIZE || nc < 0 || nc >= SIZE) continue;
+        const t = grid[nr][nc].type;
+        if (t === "operation" || t === "locked") return true;
+      }
+    }
+  }
+  // Also check: are there any operations or locked tiles at all?
+  let hasOp = false;
+  for (let r = 0; r < SIZE; r++)
+    for (let c = 0; c < SIZE; c++)
+      if (grid[r][c].type === "operation" || grid[r][c].type === "locked") hasOp = true;
+  if (!hasOp) return false;
+
+  // Check if any number can reach an op through blank spaces (BFS)
+  for (let r = 0; r < SIZE; r++) {
+    for (let c = 0; c < SIZE; c++) {
+      if (grid[r][c].type !== "number") continue;
+      // BFS from this number through blanks
+      const visited = new Set();
+      const queue = [[r, c]];
+      visited.add(`${r},${c}`);
+      while (queue.length) {
+        const [cr, cc] = queue.shift();
+        for (const [dr, dc] of [[-1,0],[1,0],[0,-1],[0,1]]) {
+          const nr = cr + dr, nc = cc + dc;
+          const key = `${nr},${nc}`;
+          if (nr < 0 || nr >= SIZE || nc < 0 || nc >= SIZE) continue;
+          if (visited.has(key)) continue;
+          visited.add(key);
+          const t = grid[nr][nc].type;
+          if (t === "operation" || t === "locked") return true;
+          if (t === "blank") queue.push([nr, nc]);
+        }
+      }
+    }
+  }
+  return false;
+}
+
 // ── Click handling ──
 function handleClick(r, c) {
   if (gameState !== "playing") return;
@@ -386,11 +435,16 @@ function handleClick(r, c) {
       }
 
       selected = null;
+      opsUsed++;
       fillEmptyCells();
 
       // Check win
       if (score >= pointTarget) {
         setTimeout(() => { gameState = "won"; render(); }, 400);
+      }
+      // Check loss — no operations possible
+      else if (!canAnyOperate()) {
+        setTimeout(() => { gameState = "lost"; render(); }, 400);
       }
 
       render(); return;
@@ -460,6 +514,10 @@ function render() {
     <div class="target-box">
       <span class="target-label">Goal</span>
       <span class="target-value">${pointTarget}</span>
+    </div>
+    <div class="stat-box">
+      <span class="stat-label">Ops</span>
+      <span class="stat-value">${opsUsed}</span>
     </div>
     <div class="stat-box">
       <span class="stat-label">Level</span>
@@ -547,10 +605,25 @@ function render() {
       <div class="overlay-icon">🎉</div>
       <div class="overlay-title">Level ${level} Complete!</div>
       <div class="overlay-text">
-        Reached ${pointTarget} points!<br>Ready for a tougher challenge?
+        Reached ${pointTarget} points in <strong style="color:#6366f1">${opsUsed}</strong> operation${opsUsed !== 1 ? 's' : ''}!<br>
+        ${opsUsed <= pointTarget ? '<span style="color:#22c55e;font-weight:600">Efficient! 🔥</span>' : 'Can you do it in fewer moves?'}
       </div>
       <button class="btn btn-primary" onclick="nextLevel()">Next Level →</button>
-      <button class="btn btn-secondary" onclick="level=0;score=0;initGame();startGame();">Restart</button>
+      <button class="btn btn-secondary" onclick="level=0;score=0;opsUsed=0;initGame();startGame();">Restart</button>
+    </div>`;
+  }
+
+  // Loss overlay
+  if (gameState === "lost") {
+    h += `<div class="overlay">
+      <div class="overlay-icon">💥</div>
+      <div class="overlay-title">No Moves Left!</div>
+      <div class="overlay-text">
+        No numbers can reach an operation.<br>
+        Score: <strong>${score}</strong> / ${pointTarget}<br>
+        Operations used: <strong>${opsUsed}</strong>
+      </div>
+      <button class="btn btn-primary" onclick="opsUsed=0;score=0;initGame();startGame();">Try Again</button>
     </div>`;
   }
 
