@@ -4,777 +4,343 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>Mod2</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body {
-    height: 100%; overflow: auto;
-    font-family: 'DM Sans', -apple-system, sans-serif;
-    background: #faf8f5; user-select: none; touch-action: manipulation;
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --walnut: #3B2316;
+    --walnut-dark: #2A180F;
+    --walnut-deeper: #1E110A;
+    --parchment: #E8DCC8;
+    --parchment-dim: #C4B59E;
+    --parchment-dark: #9E8E76;
+    --gold: #C9A84C;
+    --gold-bright: #E0C068;
+    --gold-dim: #8B7435;
+    --amber: #D4943A;
+    --whiskey: #B8762E;
+    --cream: #F5F0E6;
+    --coal: #1A1410;
+    --ring-stain: rgba(180, 150, 100, 0.08);
+    --glow: rgba(201, 168, 76, 0.15);
+    --board-size: min(70vw, 340px);
+    --cell-gap: 3px;
+    --grid-cols: 3;
   }
 
-  @keyframes popIn { 0% { transform: scale(0); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
-  @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.12); } 100% { transform: scale(1); } }
-  @keyframes shimmer { 0% { box-shadow: 0 0 0 0 rgba(99,102,241,0.3); } 100% { box-shadow: 0 0 8px 3px rgba(99,102,241,0.15); } }
-  @keyframes scoreUp { 0% { opacity:1; transform: translateY(0) scale(1); } 100% { opacity:0; transform: translateY(-36px) scale(1.3); } }
-  @keyframes scoreDown { 0% { opacity:1; transform: translateY(0) scale(1); } 100% { opacity:0; transform: translateY(-36px) scale(1.3); } }
-  @keyframes shakeX { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
-
-  .container {
-    display: flex; flex-direction: column; align-items: center;
-    justify-content: flex-start; min-height: 100vh; padding: 14px 8px;
-  }
-  .title { font-size: 28px; font-weight: 800; letter-spacing: -1.5px; color: #1a1a1a; }
-  .subtitle { font-size: 11px; font-weight: 500; color: #999; letter-spacing: 2px; text-transform: uppercase; margin-top: 1px; }
-
-  .info-row { display: flex; gap: 8px; margin: 10px 0 6px; align-items: stretch; }
-  .stat-box {
-    display: flex; flex-direction: column; align-items: center;
-    background: #f0eded; border-radius: 10px; padding: 5px 14px; min-width: 60px;
-  }
-  .stat-label { font-size: 9px; font-weight: 600; color: #aaa; letter-spacing: 1px; text-transform: uppercase; }
-  .stat-value { font-size: 20px; font-weight: 700; color: #1a1a1a; font-family: 'DM Mono', monospace; }
-  .stat-value.negative { color: #e74c3c; }
-
-  .target-box {
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    background: rgba(99,102,241,0.08); border: 1.5px solid rgba(99,102,241,0.2);
-    border-radius: 10px; padding: 5px 18px; min-width: 80px;
-  }
-  .target-label { font-size: 9px; font-weight: 600; color: #6366f1; letter-spacing: 1px; text-transform: uppercase; }
-  .target-value { font-size: 22px; font-weight: 800; color: #6366f1; font-family: 'DM Mono', monospace; }
-
-  .progress-wrap { width: 100%; max-width: 340px; margin: 4px 0 8px; }
-  .progress-bar { height: 6px; background: #e8e4e0; border-radius: 3px; overflow: hidden; }
-  .progress-fill { height: 100%; border-radius: 3px; transition: width 300ms ease, background 300ms ease; }
-
-  .rule-row {
-    display: flex; gap: 14px; justify-content: center; margin-bottom: 6px;
-    font-size: 11px; color: #888; font-weight: 500;
-  }
-  .rule-even { color: #3b82f6; }
-  .rule-odd { color: #e74c3c; }
-
-  .board-wrap { position: relative; }
-  .board { display: grid; gap: 3px; background: #cdc1b4; border-radius: 10px; padding: 3px; }
-
-  .cell {
-    border-radius: 6px; display: flex; align-items: center; justify-content: center;
-    font-weight: 700; font-family: 'DM Mono', monospace; cursor: pointer;
-    transition: transform 80ms ease; position: relative;
-  }
-  .cell:active { transform: scale(0.93); }
-
-  .cell-number { border: 2px solid transparent; }
-
-  .cell-empty { background: rgba(238,228,218,0.2); border: 2px solid transparent; cursor: default; }
-  .cell-empty.valid-move {
-    background: rgba(99,102,241,0.08); border: 2px dashed rgba(99,102,241,0.3); cursor: pointer;
+  body {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    background: var(--coal); color: var(--parchment);
+    min-height: 100dvh; display: flex; flex-direction: column; align-items: center;
+    overflow-x: hidden; -webkit-user-select: none; user-select: none;
   }
 
-  .cell-blank {
-    background: rgba(238,228,218,0.12); border: 2px dotted rgba(180,170,160,0.4);
-    cursor: default;
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background:
+      repeating-linear-gradient(2deg, transparent, transparent 8px, rgba(60,35,20,0.12) 8px, rgba(60,35,20,0.12) 9px),
+      repeating-linear-gradient(178deg, transparent, transparent 14px, rgba(80,50,30,0.06) 14px, rgba(80,50,30,0.06) 15px),
+      radial-gradient(ellipse at 30% 20%, rgba(60,40,20,0.3) 0%, transparent 60%),
+      radial-gradient(ellipse at 70% 80%, rgba(40,25,15,0.4) 0%, transparent 60%),
+      linear-gradient(160deg, #2A1A10 0%, #1E110A 40%, #16100B 70%, #1A1410 100%);
+    z-index: -2;
   }
-  .cell-blank.valid-move {
-    background: rgba(99,102,241,0.1); border: 2px dashed rgba(99,102,241,0.4); cursor: pointer;
-  }
-  .cell-number.selected { border-color: #6366f1 !important; box-shadow: 0 0 10px rgba(99,102,241,0.4); z-index: 2; }
-  .cell-number.new-tile { animation: popIn 250ms ease; }
-  .cell-number.valid-move { border-color: rgba(99,102,241,0.4) !important; }
-
-  .cell-operation {
-    background: rgba(99,102,241,0.1); border: 2px dashed rgba(99,102,241,0.4);
-    color: #6366f1;
-  }
-  .cell-operation.valid-move {
-    background: rgba(99,102,241,0.22); border-color: rgba(99,102,241,0.7);
-    animation: shimmer 700ms ease infinite alternate;
+  body::after {
+    content: ''; position: fixed; inset: 0;
+    background: radial-gradient(ellipse at center, transparent 40%, rgba(10,6,3,0.7) 100%);
+    pointer-events: none; z-index: 100;
   }
 
-  .cell-locked {
-    background: rgba(99,102,241,0.18); border: 2px solid rgba(99,102,241,0.5);
-    color: #6366f1; flex-direction: column; line-height: 1;
-  }
-  .cell-locked.valid-move {
-    background: rgba(99,102,241,0.3); border-color: #6366f1;
-    animation: shimmer 500ms ease infinite alternate;
-  }
+  .ring-stain { position: fixed; width: 120px; height: 120px; border-radius: 50%; border: 3px solid var(--ring-stain); top: 60px; right: 30px; opacity: 0.5; z-index: -1; }
+  .ring-stain::after { content: ''; position: absolute; inset: 4px; border-radius: 50%; border: 1px solid rgba(180,150,100,0.04); }
+  .ring-stain-2 { position: fixed; width: 90px; height: 90px; border-radius: 50%; border: 2px solid var(--ring-stain); bottom: 80px; left: 20px; opacity: 0.35; z-index: -1; }
+  .noise { position: fixed; inset: 0; opacity: 0.035; z-index: 99; pointer-events: none; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); background-size: 128px 128px; }
 
-  .locked-num { font-weight: 800; color: #1a1a1a; }
-  .locked-op { font-weight: 600; color: #6366f1; }
+  .header { width: 100%; max-width: 560px; padding: 20px 20px 8px; display: flex; align-items: flex-end; justify-content: space-between; position: relative; z-index: 10; }
+  .logo-title { font-family: 'Playfair Display', serif; font-weight: 900; font-size: 36px; letter-spacing: 3px; color: var(--gold); line-height: 1; text-shadow: 0 2px 8px rgba(201,168,76,0.3), 0 0 30px rgba(201,168,76,0.08); }
+  .logo-subtitle { font-family: 'Cormorant Garamond', serif; font-weight: 300; font-style: italic; font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: var(--parchment-dark); margin-top: 2px; margin-left: 2px; }
+  .score-area { display: flex; gap: 10px; align-items: flex-end; }
+  .score-box { text-align: center; background: linear-gradient(145deg, rgba(59,35,22,0.6), rgba(42,24,15,0.8)); border: 1px solid rgba(201,168,76,0.15); border-radius: 6px; padding: 5px 12px; min-width: 60px; backdrop-filter: blur(4px); }
+  .score-label { font-family: 'Cormorant Garamond', serif; font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--parchment-dark); font-weight: 600; }
+  .score-value { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--cream); line-height: 1.2; }
 
-  .overlay {
-    position: absolute; inset: 0; background: rgba(250,248,245,0.92);
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    border-radius: 10px; z-index: 10; backdrop-filter: blur(4px);
-  }
-  .overlay-icon { font-size: 40px; margin-bottom: 8px; }
-  .overlay-title { font-size: 24px; font-weight: 800; color: #1a1a1a; margin-bottom: 4px; }
-  .overlay-text {
-    font-size: 12px; color: #777; margin-bottom: 14px; text-align: center;
-    max-width: 260px; line-height: 1.55; padding: 0 12px;
-  }
-  .btn {
-    padding: 8px 24px; border-radius: 8px; border: none; cursor: pointer;
-    font-size: 13px; font-weight: 600; font-family: 'DM Sans', sans-serif;
-  }
-  .btn-primary { background: #1a1a1a; color: #fff; }
-  .btn-secondary { background: transparent; color: #1a1a1a; border: 1px solid #ddd; margin-top: 6px; }
+  .info-bar { width: 100%; max-width: 560px; padding: 6px 20px 10px; display: flex; align-items: center; justify-content: center; gap: 10px; z-index: 10; flex-wrap: wrap; }
+  .info-item { display: flex; align-items: center; gap: 5px; font-family: 'Cormorant Garamond', serif; font-size: 13px; color: var(--parchment-dark); letter-spacing: 0.5px; }
+  .info-value { font-family: 'Playfair Display', serif; font-weight: 700; color: var(--gold-bright); font-size: 17px; text-shadow: 0 0 10px rgba(201,168,76,0.2); }
+  .info-value.lv { color: var(--amber); }
+  .info-div { width: 30px; height: 1px; background: linear-gradient(90deg, transparent, var(--gold-dim), transparent); }
 
-  .float-text {
-    position: absolute; font-weight: 800; pointer-events: none; z-index: 20;
-    font-family: 'DM Mono', monospace;
-  }
-  .float-plus { color: #3b82f6; animation: scoreUp 900ms ease forwards; }
-  .float-minus { color: #e74c3c; animation: scoreDown 900ms ease forwards; }
-  .float-zero { color: #8b5cf6; animation: scoreUp 900ms ease forwards; }
-  .float-result { color: #6366f1; font-size: 13px; animation: scoreUp 1100ms ease forwards; }
+  .progress-wrap { width: 100%; max-width: 560px; padding: 0 20px 10px; z-index: 10; }
+  .progress-track { width: 100%; height: 6px; border-radius: 3px; background: rgba(50,32,20,0.5); border: 1px solid rgba(201,168,76,0.08); overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--gold-dim), var(--gold), var(--gold-bright)); transition: width 0.5s cubic-bezier(0.34,1.56,0.64,1); box-shadow: 0 0 8px rgba(201,168,76,0.3); }
+  .progress-labels { display: flex; justify-content: space-between; margin-top: 3px; }
+  .progress-label { font-family: 'Cormorant Garamond', serif; font-size: 10px; color: var(--parchment-dark); letter-spacing: 1px; font-style: italic; }
 
-  .hint { font-size: 10px; color: #bbb; text-align: center; margin-top: 8px; line-height: 1.4; }
+  .board-frame { position: relative; z-index: 10; width: var(--board-size); height: var(--board-size); padding: 10px; background: linear-gradient(145deg, var(--walnut), var(--walnut-dark) 60%, var(--walnut-deeper)); border-radius: 10px; border: 1px solid rgba(201,168,76,0.12); box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(201,168,76,0.08), inset 0 -1px 0 rgba(0,0,0,0.3); transition: width 0.5s ease, height 0.5s ease; }
+  .board-felt { width: 100%; height: 100%; background: linear-gradient(135deg, #1F1610, #1A120C, #17100A); border-radius: 6px; display: grid; grid-template-columns: repeat(var(--grid-cols), 1fr); grid-template-rows: repeat(var(--grid-cols), 1fr); gap: var(--cell-gap); padding: var(--cell-gap); box-shadow: inset 0 2px 8px rgba(0,0,0,0.6); }
 
-  .action-row {
-    display: flex; gap: 8px; margin-top: 8px; justify-content: center;
-  }
-  .btn-small {
-    padding: 5px 14px; border-radius: 6px; border: 1px solid #ddd; cursor: pointer;
-    font-size: 11px; font-weight: 600; font-family: 'DM Sans', sans-serif;
-    background: #fff; color: #555; transition: all 120ms ease;
-  }
-  .btn-small:active { transform: scale(0.95); }
-  .btn-small.disabled { opacity: 0.35; pointer-events: none; }
-  .btn-small.active { background: #6366f1; color: #fff; border-color: #6366f1; }
+  .cell { border-radius: 4px; display: flex; align-items: center; justify-content: center; position: relative; transition: transform 0.15s ease; background: rgba(50,32,20,0.35); border: 1px solid rgba(80,55,35,0.15); }
+  .cell.empty { background: rgba(50,32,20,0.2); border-color: rgba(80,55,35,0.08); }
+  .cell.number { background: linear-gradient(145deg, #4A3628, #3B2A1E); border: 1px solid rgba(201,168,76,0.1); box-shadow: 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04); cursor: pointer; }
+  .cell.number:hover { border-color: rgba(201,168,76,0.3); box-shadow: 0 2px 8px rgba(0,0,0,0.4), 0 0 12px var(--glow), inset 0 1px 0 rgba(255,255,255,0.06); }
+  .cell.number .tile-text { font-family: 'Playfair Display', serif; font-weight: 700; font-size: clamp(14px, 3.5vw, 22px); color: var(--cream); text-shadow: 0 1px 2px rgba(0,0,0,0.4); }
+  .cell.number.selected { border-color: var(--gold); box-shadow: 0 0 0 2px rgba(201,168,76,0.25), 0 0 16px rgba(201,168,76,0.2), 0 4px 12px rgba(0,0,0,0.4); transform: scale(1.08); z-index: 5; background: linear-gradient(145deg, #5A4232, #4A3426); }
 
-  .history-panel {
-    width: 100%; max-width: 340px; margin-top: 8px;
-    background: #fff; border: 1px solid #e8e4e0; border-radius: 10px;
-    max-height: 160px; overflow-y: auto; padding: 8px 0;
-  }
-  .history-item {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 4px 12px; font-size: 11px; font-family: 'DM Mono', monospace;
-  }
-  .history-item:nth-child(odd) { background: rgba(238,228,218,0.15); }
-  .history-desc { color: #555; }
-  .history-pts { font-weight: 700; min-width: 28px; text-align: right; }
-  .history-pts.pos { color: #3b82f6; }
-  .history-pts.neg { color: #e74c3c; }
-  .history-pts.neutral { color: #aaa; }
-  .history-score { color: #999; font-size: 10px; min-width: 36px; text-align: right; }
-  .history-empty { padding: 12px; text-align: center; color: #ccc; font-size: 11px; }
+  .cell.op { cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.06); }
+  .cell.op .tile-text { font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(16px, 4vw, 26px); text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
+  .cell.op-add { background: linear-gradient(145deg, #3D6B4A, #2E5238); border-color: rgba(74,124,89,0.3); }
+  .cell.op-add .tile-text { color: #A8D5B5; }
+  .cell.op-sub { background: linear-gradient(145deg, #7A3540, #5E2830); border-color: rgba(139,64,73,0.3); }
+  .cell.op-sub .tile-text { color: #D4A0A7; }
+  .cell.op-mul { background: linear-gradient(145deg, #3E4D7A, #2E3A5E); border-color: rgba(74,90,139,0.3); }
+  .cell.op-mul .tile-text { color: #A8B5D5; }
+  .cell.op-div { background: linear-gradient(145deg, #6B5535, #524028); border-color: rgba(123,101,64,0.3); }
+  .cell.op-div .tile-text { color: #D5C5A0; }
+  .cell.op.has-first { box-shadow: 0 0 0 1px rgba(201,168,76,0.2), 0 0 10px rgba(201,168,76,0.12), 0 2px 6px rgba(0,0,0,0.4); }
+  .cell.op .locked-num { position: absolute; top: 1px; right: 3px; font-family: 'JetBrains Mono', monospace; font-size: clamp(7px, 1.6vw, 11px); color: rgba(245,240,230,0.6); font-weight: 600; }
 
-  .rules {
-    width: 100%; max-width: 340px; margin-top: 10px; padding: 0;
-    font-size: 11px; color: #888; line-height: 1.6;
-  }
-  .rules ol {
-    list-style: none; counter-reset: rule; padding: 0; margin: 0;
-  }
-  .rules li {
-    counter-increment: rule; padding: 2px 0;
-  }
-  .rules li::before {
-    content: counter(rule) ". "; font-weight: 700; color: #6366f1;
-  }
+  @keyframes merge-pop { 0% { transform: scale(0.5); opacity: 0; } 60% { transform: scale(1.15); } 100% { transform: scale(1); opacity: 1; } }
+  .cell.merged { animation: merge-pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); }
+  @keyframes score-flash { 0% { color: var(--gold-bright); text-shadow: 0 0 12px rgba(201,168,76,0.5); transform: scale(1.2); } 100% { color: var(--cream); text-shadow: none; transform: scale(1); } }
+  .score-pop-anim { animation: score-flash 0.5s ease-out; }
+
+  .controls { width: 100%; max-width: 560px; padding: 14px 20px; display: flex; justify-content: center; gap: 10px; z-index: 10; }
+  .btn { font-family: 'Cormorant Garamond', serif; font-size: 13px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--parchment-dim); background: linear-gradient(145deg, rgba(59,35,22,0.7), rgba(42,24,15,0.9)); border: 1px solid rgba(201,168,76,0.15); border-radius: 6px; padding: 9px 20px; cursor: pointer; transition: all 0.2s ease; }
+  .btn:hover { color: var(--gold); border-color: rgba(201,168,76,0.35); box-shadow: 0 0 12px rgba(201,168,76,0.1); }
+  .btn:active { transform: scale(0.97); }
+
+  .overlay { position: fixed; inset: 0; background: rgba(10,6,3,0.92); backdrop-filter: blur(8px); z-index: 200; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+  .overlay.active { opacity: 1; pointer-events: auto; }
+  .overlay-card { background: linear-gradient(155deg, var(--walnut), var(--walnut-dark)); border: 1px solid rgba(201,168,76,0.2); border-radius: 12px; padding: 30px 26px; max-width: 380px; width: 90%; box-shadow: 0 16px 64px rgba(0,0,0,0.6); }
+  .overlay-card h2 { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 24px; color: var(--gold); margin-bottom: 14px; text-align: center; }
+  .overlay-card p { font-size: 15px; line-height: 1.7; color: var(--parchment-dim); margin-bottom: 10px; }
+  .op-legend { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 14px 0; }
+  .op-legend-item { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--parchment-dim); }
+  .op-swatch { width: 24px; height: 24px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; font-weight: 600; font-size: 14px; }
+  .op-swatch.add { background: linear-gradient(145deg, #3D6B4A, #2E5238); color: #A8D5B5; }
+  .op-swatch.sub { background: linear-gradient(145deg, #7A3540, #5E2830); color: #D4A0A7; }
+  .op-swatch.mul { background: linear-gradient(145deg, #3E4D7A, #2E3A5E); color: #A8B5D5; }
+  .op-swatch.div { background: linear-gradient(145deg, #6B5535, #524028); color: #D5C5A0; }
+  .overlay-hint { font-style: italic; font-size: 12px; color: var(--parchment-dark); text-align: center; margin-top: 8px; }
+
+  @keyframes shimmer { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
+  .lu-title { font-family: 'Playfair Display', serif; font-weight: 900; font-size: 42px; text-align: center; margin-bottom: 6px; background: linear-gradient(90deg, var(--gold), var(--gold-bright), var(--cream), var(--gold-bright), var(--gold)); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: shimmer 3s linear infinite; }
+  .lu-sub { font-family: 'Cormorant Garamond', serif; font-size: 18px; color: var(--parchment-dim); text-align: center; margin-bottom: 20px; font-style: italic; letter-spacing: 1px; }
+  .lu-stats { display: flex; justify-content: center; gap: 24px; margin-bottom: 20px; }
+  .lu-stat { text-align: center; }
+  .lu-stat .sn { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 28px; color: var(--cream); }
+  .lu-stat .sl { font-family: 'Cormorant Garamond', serif; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--parchment-dark); }
+  .lu-btn { display: block; margin: 0 auto; font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--coal); background: linear-gradient(145deg, var(--gold-bright), var(--gold), var(--whiskey)); border: none; border-radius: 8px; padding: 12px 36px; cursor: pointer; box-shadow: 0 4px 16px rgba(201,168,76,0.3); transition: all 0.2s ease; }
+  .lu-btn:hover { transform: scale(1.04); box-shadow: 0 6px 24px rgba(201,168,76,0.4); }
+
+  .footer { padding: 10px; font-size: 10px; color: rgba(158,142,118,0.3); letter-spacing: 2px; text-transform: uppercase; font-family: 'Cormorant Garamond', serif; z-index: 10; }
 </style>
 </head>
 <body>
-<div class="container" id="app"></div>
+<div class="noise"></div>
+<div class="ring-stain"></div>
+<div class="ring-stain-2"></div>
+
+<div class="header">
+  <div>
+    <div class="logo-title">Mod2</div>
+    <div class="logo-subtitle">A numbers game</div>
+  </div>
+  <div class="score-area">
+    <div class="score-box"><div class="score-label">Score</div><div class="score-value" id="score">0</div></div>
+    <div class="score-box"><div class="score-label">Best</div><div class="score-value" id="best">0</div></div>
+  </div>
+</div>
+
+<div class="info-bar">
+  <div class="info-item">Level <span class="info-value lv" id="level">1</span></div>
+  <div class="info-div"></div>
+  <div class="info-item">Craft <span class="info-value" id="target">8</span></div>
+  <div class="info-div"></div>
+  <div class="info-item">Grid <span class="info-value lv" id="grid-label">3×3</span></div>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-track"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+  <div class="progress-labels">
+    <span class="progress-label" id="matches-label">0 / 2 matches</span>
+    <span class="progress-label" id="moves-label">0 moves</span>
+  </div>
+</div>
+
+<div class="board-frame"><div class="board-felt" id="board"></div></div>
+
+<div class="controls">
+  <button class="btn" id="btn-help">How to Play</button>
+  <button class="btn" id="btn-new">Restart</button>
+</div>
+
+<div class="overlay" id="ov-help">
+  <div class="overlay-card">
+    <h2>How to Play</h2>
+    <p>Tap a <strong>number tile</strong>, then tap an <strong>operation tile</strong> to lock it in. Tap a second number to complete the operation.</p>
+    <p>Results split into digit tiles. Craft the <strong>target number</strong> within a 2×2 area to score.</p>
+    <p>Match enough targets to <strong>level up</strong> — the board grows and targets get bigger. How far can you go?</p>
+    <div class="op-legend">
+      <div class="op-legend-item"><div class="op-swatch add">+</div> Addition</div>
+      <div class="op-legend-item"><div class="op-swatch sub">−</div> Subtraction</div>
+      <div class="op-legend-item"><div class="op-swatch mul">×</div> Multiply</div>
+      <div class="op-legend-item"><div class="op-swatch div">÷</div> Division</div>
+    </div>
+    <p class="overlay-hint">Tap anywhere to close</p>
+  </div>
+</div>
+
+<div class="overlay" id="ov-lu">
+  <div class="overlay-card" style="text-align:center;">
+    <div class="lu-title" id="lu-t">Level 2</div>
+    <div class="lu-sub" id="lu-s">The board expands</div>
+    <div class="lu-stats">
+      <div class="lu-stat"><div class="sn" id="lu-sc">0</div><div class="sl">Score</div></div>
+      <div class="lu-stat"><div class="sn" id="lu-gr">4×4</div><div class="sl">New Grid</div></div>
+      <div class="lu-stat"><div class="sn" id="lu-mv">0</div><div class="sl">Moves</div></div>
+    </div>
+    <button class="lu-btn" id="btn-lu">Continue</button>
+  </div>
+</div>
+
+<div class="footer">Est. MMXXVI</div>
 
 <script>
-const SIZE = 5;
-const OP_RATIO = 0.25; // ~25% of tiles are operations
-const OP_SYMBOLS = ['+', '−', '×', '÷'];
-const POINT_TARGET = 15;
+const OPS=['+','−','×','÷'];
+const OPC={'+':'op-add','−':'op-sub','×':'op-mul','÷':'op-div'};
 
-// ── Responsive sizing ──
-const vw = Math.min(window.innerWidth - 24, 420);
-const CELL = Math.floor((vw - 3 * (SIZE + 1)) / SIZE);
-const BOARD_PX = CELL * SIZE + 3 * (SIZE + 1);
-
-// ── State ──
-let grid, selected, score, pointTarget, level, gameState, opsUsed;
-let boardEl;
-let undoState = null; // snapshot for undo
-let moveHistory = []; // log of operations
-let showHistory = false; // toggle history panel
-
-// ── Colors ──
-function numColor(v) {
-  const m = {
-    0: { bg: "#cdc1b4", c: "#776e65" },
-    1: { bg: "#f0eded", c: "#776e65" },
-    2: { bg: "#ede4da", c: "#776e65" },
-    3: { bg: "#f2c88c", c: "#fff" },
-    4: { bg: "#f2b179", c: "#fff" },
-    5: { bg: "#f59563", c: "#fff" },
-    6: { bg: "#f67c5f", c: "#fff" },
-    7: { bg: "#f65e3b", c: "#fff" },
-    8: { bg: "#edcf72", c: "#fff" },
-    9: { bg: "#edc53f", c: "#fff" },
-  };
-  return m[v] || { bg: "#3c3a32", c: "#fff" };
+function lvlCfg(l){
+  const g=Math.min(3+(l-1),8);
+  const mn=Math.min(2+Math.floor((l-1)*0.7),7);
+  let pool;
+  if(l===1) pool=[5,6,7,8,9,10,12];
+  else if(l===2) pool=[10,12,14,15,16,18,20];
+  else if(l===3) pool=[15,18,20,21,24,25,27];
+  else if(l===4) pool=[20,24,25,27,30,32,36];
+  else if(l===5) pool=[25,30,32,35,36,40,42,45];
+  else if(l===6) pool=[30,36,40,42,45,48,50,54,56];
+  else { const b=30+(l-6)*8; pool=[]; for(let i=0;i<8;i++) pool.push(b+i*Math.ceil(l*0.8)); }
+  const opc=Math.min(0.15+l*0.015,0.28);
+  const mx=Math.min(9,5+Math.floor(l*0.7));
+  return {g,mn,pool,opc,mx};
 }
 
-// ── Undo system ──
-function saveSnapshot() {
-  undoState = {
-    grid: grid.map(row => row.map(cell => ({ ...cell }))),
-    score, opsUsed, selected
-  };
-}
+let S={board:[],level:1,score:0,best:0,moves:0,target:8,matches:0,sel:null,opL:null,cfg:null};
+const ri=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
 
-function undo() {
-  if (!undoState || gameState !== "playing") return;
-  grid = undoState.grid;
-  score = undoState.score;
-  opsUsed = undoState.opsUsed;
-  selected = null;
-  // Remove last history entry
-  if (moveHistory.length) moveHistory.pop();
-  undoState = null;
+function pickT(){ const p=S.cfg.pool; return p[ri(0,p.length-1)]; }
+
+function initLvl(l){
+  S.level=l; S.cfg=lvlCfg(l); S.matches=0; S.sel=null; S.opL=null; S.target=pickT();
+  const g=S.cfg.g;
+  document.documentElement.style.setProperty('--grid-cols',g);
+  const sz={3:'min(70vw,340px)',4:'min(76vw,380px)',5:'min(82vw,420px)',6:'min(86vw,460px)',7:'min(90vw,490px)',8:'min(92vw,520px)'};
+  document.documentElement.style.setProperty('--board-size',sz[g]||sz[8]);
+  S.board=[];
+  for(let r=0;r<g;r++){S.board[r]=[];for(let c=0;c<g;c++){
+    S.board[r][c]=Math.random()<S.cfg.opc?{type:'op',value:OPS[ri(0,3)],fn:null}:{type:'num',value:ri(1,S.cfg.mx)};
+  }}
   render();
 }
 
-// ── Init ──
-function initGame() {
-  grid = [];
-  for (let r = 0; r < SIZE; r++) {
-    grid[r] = [];
-    for (let c = 0; c < SIZE; c++) {
-      if (Math.random() < OP_RATIO) {
-        grid[r][c] = { type: "operation", op: OP_SYMBOLS[Math.floor(Math.random() * 4)] };
-      } else {
-        grid[r][c] = { type: "number", value: Math.floor(Math.random() * 9) + 1, isNew: false };
-      }
+function render(){
+  const g=S.cfg.g, el=document.getElementById('board'); el.innerHTML='';
+  for(let r=0;r<g;r++) for(let c=0;c<g;c++){
+    const d=document.createElement('div'), t=S.board[r][c];
+    if(!t){d.className='cell empty';}
+    else if(t.type==='num'){
+      const isSel=S.sel&&S.sel.r===r&&S.sel.c===c;
+      d.className=`cell number${isSel?' selected':''}${t.merged?' merged':''}`;
+      d.innerHTML=`<span class="tile-text">${t.value}</span>`;
+      d.onclick=()=>tapNum(r,c);
+    } else {
+      const hf=t.fn!==null;
+      d.className=`cell op ${OPC[t.value]}${hf?' has-first':''}`;
+      d.innerHTML=`<span class="tile-text">${t.value}</span>`;
+      if(hf) d.innerHTML+=`<span class="locked-num">${t.fn}</span>`;
+      d.onclick=()=>tapOp(r,c);
     }
+    el.appendChild(d);
   }
-  selected = null;
-  score = 0;
-  level = 1;
-  opsUsed = 0;
-  pointTarget = POINT_TARGET;
-  undoState = null;
-  moveHistory = [];
-  showHistory = false;
-  gameState = "menu";
-  render();
+  document.getElementById('score').textContent=S.score;
+  document.getElementById('best').textContent=S.best;
+  document.getElementById('target').textContent=S.target;
+  document.getElementById('level').textContent=S.level;
+  document.getElementById('grid-label').textContent=`${g}×${g}`;
+  document.getElementById('moves-label').textContent=`${S.moves} moves`;
+  const mn=S.cfg.mn;
+  document.getElementById('matches-label').textContent=`${S.matches} / ${mn} matches`;
+  document.getElementById('progress').style.width=`${Math.min((S.matches/mn)*100,100)}%`;
 }
 
-function startGame() {
-  gameState = "playing";
-  render();
+function tapNum(r,c){
+  const g=S.cfg.g;
+  if(S.opL){
+    const op=S.board[S.opL.r][S.opL.c], a=op.fn, b=S.board[r][c].value;
+    let res;
+    switch(op.value){ case'+':res=a+b;break; case'−':res=a-b;break; case'×':res=a*b;break; case'÷':res=b?Math.round((a/b)*10)/10:0;break; }
+    if(res<0) res=Math.abs(res); res=Math.round(res);
+    S.board[r][c]=null;
+    const digs=String(res).split('').map(Number);
+    const pl=[{r:S.opL.r,c:S.opL.c}];
+    const nb=[{r:S.opL.r-1,c:S.opL.c},{r:S.opL.r+1,c:S.opL.c},{r:S.opL.r,c:S.opL.c-1},{r:S.opL.r,c:S.opL.c+1}].filter(n=>n.r>=0&&n.r<g&&n.c>=0&&n.c<g&&!S.board[n.r][n.c]);
+    for(let i=1;i<digs.length&&i<=nb.length;i++) pl.push(nb[i-1]);
+    for(let i=0;i<digs.length&&i<pl.length;i++) S.board[pl[i].r][pl[i].c]={type:'num',value:digs[i],merged:true};
+    for(let rr=0;rr<g;rr++) for(let cc=0;cc<g;cc++) if(!S.board[rr][cc]) S.board[rr][cc]=Math.random()<S.cfg.opc?{type:'op',value:OPS[ri(0,3)],fn:null}:{type:'num',value:ri(1,S.cfg.mx)};
+    S.moves++; S.opL=null; S.sel=null;
+    checkT(); render();
+    setTimeout(()=>{for(let rr=0;rr<g;rr++) for(let cc=0;cc<g;cc++) if(S.board[rr][cc]&&S.board[rr][cc].merged) S.board[rr][cc].merged=false;},400);
+  } else { S.sel={r,c}; render(); }
 }
 
-function nextLevel() {
-  level++;
-  pointTarget = POINT_TARGET + (level - 1) * 5;
-  score = 0;
-  opsUsed = 0;
-  undoState = null;
-  moveHistory = [];
-  showHistory = false;
-  // Regenerate board
-  for (let r = 0; r < SIZE; r++) {
-    for (let c = 0; c < SIZE; c++) {
-      if (Math.random() < OP_RATIO) {
-        grid[r][c] = { type: "operation", op: OP_SYMBOLS[Math.floor(Math.random() * 4)] };
-      } else {
-        grid[r][c] = { type: "number", value: Math.floor(Math.random() * 9) + 1, isNew: false };
-      }
-    }
-  }
-  selected = null;
-  gameState = "playing";
-  render();
+function tapOp(r,c){
+  if(!S.sel) return;
+  const num=S.board[S.sel.r][S.sel.c];
+  if(!num||num.type!=='num') return;
+  S.board[r][c].fn=num.value;
+  S.board[S.sel.r][S.sel.c]={type:'num',value:ri(1,S.cfg.mx)};
+  S.opL={r,c}; S.sel=null; render();
 }
 
-function isAdj(r1, c1, r2, c2) {
-  return Math.abs(r1 - r2) + Math.abs(c1 - c2) === 1;
-}
-
-function doOp(a, b, op) {
-  if (op === '+') return a + b;
-  if (op === '−') return Math.abs(a - b);
-  if (op === '×') return a * b;
-  if (op === '÷') {
-    if (b === 0) return null;
-    return Math.round(a / b);
-  }
-  return null;
-}
-
-// ── Tile replacement ──
-function replaceWithDigits(r, c, result) {
-  // Zero creates a persistent blank space
-  if (result === 0) {
-    grid[r][c] = { type: "blank" };
-    return;
-  }
-
-  const digits = String(result).split('').map(Number);
-
-  // Place first digit at the operation cell itself
-  // If digit is 0, make it a blank instead of a number tile
-  if (digits[0] === 0) {
-    grid[r][c] = { type: "blank" };
-  } else {
-    grid[r][c] = { type: "number", value: digits[0], isNew: true };
-  }
-
-  // Place remaining digits in nearest empty/blank-adjacent spots
-  for (let i = 1; i < digits.length; i++) {
-    let placed = false;
-    for (let dist = 1; dist <= SIZE && !placed; dist++) {
-      const candidates = [];
-      for (let dr = -dist; dr <= dist; dr++) {
-        for (let dc = -dist; dc <= dist; dc++) {
-          if (Math.abs(dr) + Math.abs(dc) > dist) continue;
-          const nr = r + dr, nc = c + dc;
-          if (nr >= 0 && nr < SIZE && nc >= 0 && nc < SIZE &&
-              (grid[nr][nc].type === "empty" || grid[nr][nc].type === "blank")) {
-            candidates.push([nr, nc]);
-          }
-        }
-      }
-      if (candidates.length) {
-        const [pr, pc] = candidates[Math.floor(Math.random() * candidates.length)];
-        if (digits[i] === 0) {
-          grid[pr][pc] = { type: "blank" };
-        } else {
-          grid[pr][pc] = { type: "number", value: digits[i], isNew: true };
-        }
-        placed = true;
-      }
-    }
-    // If no empty/blank spot, overwrite a random number tile
-    if (!placed) {
-      const numTiles = [];
-      for (let rr = 0; rr < SIZE; rr++)
-        for (let cc = 0; cc < SIZE; cc++)
-          if (grid[rr][cc].type === "number" && !(rr === r && cc === c))
-            numTiles.push([rr, cc]);
-      if (numTiles.length) {
-        const [pr, pc] = numTiles[Math.floor(Math.random() * numTiles.length)];
-        if (digits[i] === 0) {
-          grid[pr][pc] = { type: "blank" };
-        } else {
-          grid[pr][pc] = { type: "number", value: digits[i], isNew: true };
-        }
-      }
-    }
-  }
-}
-
-// Fill temporary empty cells with new numbers/ops. "blank" cells from 0 results persist.
-// Replacement tiles have a higher 50% chance of being operations.
-const REPLACE_OP_RATIO = 0.5;
-function fillEmptyCells() {
-  for (let r = 0; r < SIZE; r++) {
-    for (let c = 0; c < SIZE; c++) {
-      if (grid[r][c].type === "empty") {
-        if (Math.random() < REPLACE_OP_RATIO) {
-          grid[r][c] = { type: "operation", op: OP_SYMBOLS[Math.floor(Math.random() * 4)] };
-        } else {
-          grid[r][c] = { type: "number", value: Math.floor(Math.random() * 9) + 1, isNew: true };
-        }
-      }
-    }
-  }
-}
-
-// ── Loss detection: can any number reach an operation or locked tile? ──
-function canAnyOperate() {
-  for (let r = 0; r < SIZE; r++) {
-    for (let c = 0; c < SIZE; c++) {
-      if (grid[r][c].type !== "number") continue;
-      // Check if this number is adjacent to an op, locked, or blank/empty (could path to op)
-      for (const [dr, dc] of [[-1,0],[1,0],[0,-1],[0,1]]) {
-        const nr = r + dr, nc = c + dc;
-        if (nr < 0 || nr >= SIZE || nc < 0 || nc >= SIZE) continue;
-        const t = grid[nr][nc].type;
-        if (t === "operation" || t === "locked") return true;
-      }
-    }
-  }
-  // Also check: are there any operations or locked tiles at all?
-  let hasOp = false;
-  for (let r = 0; r < SIZE; r++)
-    for (let c = 0; c < SIZE; c++)
-      if (grid[r][c].type === "operation" || grid[r][c].type === "locked") hasOp = true;
-  if (!hasOp) return false;
-
-  // Check if any number can reach an op through blank spaces (BFS)
-  for (let r = 0; r < SIZE; r++) {
-    for (let c = 0; c < SIZE; c++) {
-      if (grid[r][c].type !== "number") continue;
-      // BFS from this number through blanks
-      const visited = new Set();
-      const queue = [[r, c]];
-      visited.add(`${r},${c}`);
-      while (queue.length) {
-        const [cr, cc] = queue.shift();
-        for (const [dr, dc] of [[-1,0],[1,0],[0,-1],[0,1]]) {
-          const nr = cr + dr, nc = cc + dc;
-          const key = `${nr},${nc}`;
-          if (nr < 0 || nr >= SIZE || nc < 0 || nc >= SIZE) continue;
-          if (visited.has(key)) continue;
-          visited.add(key);
-          const t = grid[nr][nc].type;
-          if (t === "operation" || t === "locked") return true;
-          if (t === "blank") queue.push([nr, nc]);
-        }
-      }
-    }
-  }
-  return false;
-}
-
-// ── Click handling ──
-function handleClick(r, c) {
-  if (gameState !== "playing") return;
-  const cell = grid[r][c];
-
-  if (selected) {
-    const sr = selected.row, sc = selected.col;
-    const sel = grid[sr][sc];
-
-    // Deselect
-    if (sr === r && sc === c) {
-      selected = null;
-      render(); return;
-    }
-
-    // Must be adjacent for everything
-    if (!isAdj(sr, sc, r, c)) {
-      // If clicking another number, select it instead
-      if (cell.type === "number") {
-        selected = { row: r, col: c };
-        render(); return;
-      }
-      selected = null;
-      render(); return;
-    }
-
-    // Number → empty/blank: move into it
-    if ((cell.type === "empty" || cell.type === "blank") && sel.type === "number") {
-      saveSnapshot();
-      moveHistory.push({ type: "move", desc: `Moved ${sel.value} to [${r},${c}]`, points: 0, scoreAfter: score });
-      grid[r][c] = { ...sel, isNew: false };
-      if (cell.type === "blank") {
-        // Moving into a blank: leave a blank behind (blanks persist)
-        grid[sr][sc] = { type: "blank" };
-      } else {
-        // Moving into a temporary empty: leave empty (will auto-fill)
-        grid[sr][sc] = { type: "empty" };
-        fillEmptyCells();
-      }
-      selected = null;
-      render(); return;
-    }
-
-    // Number → operation: lock it
-    if (cell.type === "operation" && sel.type === "number") {
-      saveSnapshot();
-      moveHistory.push({ type: "lock", desc: `Locked ${sel.value} onto ${cell.op}`, points: 0, scoreAfter: score });
-      grid[r][c] = { type: "locked", op: cell.op, value: sel.value };
-      grid[sr][sc] = { type: "empty" };
-      fillEmptyCells();
-      selected = null;
-      render(); return;
-    }
-
-    // Number → locked: complete the operation
-    if (cell.type === "locked" && sel.type === "number") {
-      saveSnapshot();
-      const result = doOp(cell.value, sel.value, cell.op);
-      const opSymbol = cell.op;
-      const a = cell.value, b = sel.value;
-
-      grid[sr][sc] = { type: "empty" };
-
-      if (result !== null && result !== undefined && result >= 0) {
-        const absResult = Math.abs(Math.round(result));
-        const isEven = absResult % 2 === 0;
-        let pts = 0;
-
-        if (absResult === 0) {
-          // Zero result: +1 point (even), show purple 0
-          score++; pts = +1;
-          showFloat(r, c, `0`, "float-zero", 22);
-        } else if (isEven) {
-          score++; pts = +1;
-          showFloat(r, c, `+1`, "float-plus", 18);
-        } else {
-          score--; pts = -1;
-          showFloat(r, c, `−1`, "float-minus", 18);
-        }
-
-        showFloat(r, c, `${a} ${opSymbol} ${b} = ${absResult}`, "float-result", 13, -24);
-        moveHistory.push({ type: "op", desc: `${a} ${opSymbol} ${b} = ${absResult}`, points: pts, scoreAfter: score, even: isEven });
-
-        replaceWithDigits(r, c, absResult);
-      } else {
-        // Bad division or error — lose a point
-        score--;
-        showFloat(r, c, `−1`, "float-minus", 18);
-        grid[r][c] = { type: "operation", op: opSymbol };
-        moveHistory.push({ type: "op", desc: `${a} ${opSymbol} ${b} = error`, points: -1, scoreAfter: score, even: false });
-      }
-
-      selected = null;
-      opsUsed++;
-      fillEmptyCells();
-
-      // Check win
-      if (score >= pointTarget) {
-        setTimeout(() => { gameState = "won"; render(); }, 400);
-      }
-      // Check loss — no operations possible
-      else if (!canAnyOperate()) {
-        setTimeout(() => { gameState = "lost"; render(); }, 400);
-      }
-
-      render(); return;
-    }
-
-    // Number → number: swap select
-    if (cell.type === "number") {
-      selected = { row: r, col: c };
-      render(); return;
-    }
-
-    selected = null;
-    render(); return;
-  }
-
-  // Nothing selected
-  if (cell.type === "number") {
-    // Continuous operation: check if this number is adjacent to a locked tile
-    for (const [dr, dc] of [[-1,0],[1,0],[0,-1],[0,1]]) {
-      const nr = r + dr, nc = c + dc;
-      if (nr >= 0 && nr < SIZE && nc >= 0 && nc < SIZE && grid[nr][nc].type === "locked") {
-        // Auto-complete: select this number, then trigger the locked tile
-        selected = { row: r, col: c };
-        handleClick(nr, nc);
+function checkT(){
+  const g=S.cfg.g;
+  for(let r=0;r<g-1;r++) for(let c=0;c<g-1;c++){
+    const cls=[S.board[r][c],S.board[r][c+1],S.board[r+1][c],S.board[r+1][c+1]];
+    if(cls.every(t=>t&&t.type==='num')){
+      const d=cls.map(t=>t.value);
+      const combos=[d[0]*1000+d[1]*100+d[2]*10+d[3],d[0]*100+d[1]*10+d[2],d[2]*100+d[3]*10+d[0],d[0]*10+d[1],d[2]*10+d[3],d[0]*10+d[2],d[1]*10+d[3],d[0],d[1],d[2],d[3]];
+      if(combos.includes(S.target)){
+        S.score+=S.target; if(S.score>S.best) S.best=S.score; S.matches++;
+        const se=document.getElementById('score'); se.classList.remove('score-pop-anim'); void se.offsetWidth; se.classList.add('score-pop-anim');
+        S.board[r][c]=null; S.board[r][c+1]=null; S.board[r+1][c]=null; S.board[r+1][c+1]=null;
+        for(let rr=r;rr<=r+1;rr++) for(let cc=c;cc<=c+1;cc++) S.board[rr][cc]=Math.random()<S.cfg.opc?{type:'op',value:OPS[ri(0,3)],fn:null}:{type:'num',value:ri(1,S.cfg.mx),merged:true};
+        if(S.matches>=S.cfg.mn) setTimeout(()=>showLU(),500);
+        else S.target=pickT();
         return;
       }
     }
-    // No adjacent locked tile — normal select
-    selected = { row: r, col: c };
-    render();
   }
 }
 
-// ── Valid moves ──
-function getValidMoves() {
-  if (!selected) return new Set();
-  const sr = selected.row, sc = selected.col;
-  const moves = new Set();
-  for (const [dr, dc] of [[-1,0],[1,0],[0,-1],[0,1]]) {
-    const nr = sr + dr, nc = sc + dc;
-    if (nr >= 0 && nr < SIZE && nc >= 0 && nc < SIZE) {
-      const t = grid[nr][nc].type;
-      if (t === "empty" || t === "blank" || t === "operation" || t === "locked") {
-        moves.add(`${nr},${nc}`);
-      }
-    }
-  }
-  return moves;
+function showLU(){
+  const nl=S.level+1, nc=lvlCfg(nl);
+  document.getElementById('lu-t').textContent=`Level ${nl}`;
+  const flav=['The board expands','A wider field awaits','Room to maneuver','The challenge deepens','Numbers multiply','Mastery beckons','The grind continues','Beyond the ordinary','Relentless pursuit','Ever upward'];
+  document.getElementById('lu-s').textContent=flav[Math.min(nl-2,flav.length-1)];
+  document.getElementById('lu-sc').textContent=S.score;
+  document.getElementById('lu-gr').textContent=`${nc.g}×${nc.g}`;
+  document.getElementById('lu-mv').textContent=S.moves;
+  document.getElementById('ov-lu').classList.add('active');
 }
 
-// ── Floats ──
-function showFloat(r, c, text, cls, size, offsetY = 0) {
-  if (!boardEl) return;
-  const el = document.createElement("div");
-  el.className = `float-text ${cls}`;
-  el.textContent = text;
-  el.style.fontSize = size + "px";
-  el.style.left = (3 + c * (CELL + 3) + CELL / 2 - 20) + "px";
-  el.style.top = (3 + r * (CELL + 3) + offsetY) + "px";
-  boardEl.appendChild(el);
-  setTimeout(() => el.remove(), 1100);
-}
+document.getElementById('btn-lu').onclick=()=>{document.getElementById('ov-lu').classList.remove('active'); initLvl(S.level+1);};
+document.getElementById('btn-new').onclick=()=>{S.score=0; S.moves=0; initLvl(1);};
+document.getElementById('btn-help').onclick=()=>document.getElementById('ov-help').classList.add('active');
+document.getElementById('ov-help').onclick=()=>document.getElementById('ov-help').classList.remove('active');
 
-// ── Render ──
-function render() {
-  const app = document.getElementById("app");
-  const valid = getValidMoves();
-  let h = "";
-
-  h += `<div class="title">Mod2</div>`;
-  h += `<div class="subtitle">even gains · odd drains</div>`;
-
-  h += `<div class="info-row">
-    <div class="stat-box">
-      <span class="stat-label">Score</span>
-      <span class="stat-value ${score < 0 ? 'negative' : ''}">${score}</span>
-    </div>
-    <div class="target-box">
-      <span class="target-label">Goal</span>
-      <span class="target-value">${pointTarget}</span>
-    </div>
-    <div class="stat-box">
-      <span class="stat-label">Ops</span>
-      <span class="stat-value">${opsUsed}</span>
-    </div>
-    <div class="stat-box">
-      <span class="stat-label">Level</span>
-      <span class="stat-value">${level}</span>
-    </div>
-  </div>`;
-
-  // Progress bar
-  const pct = Math.max(0, Math.min(100, (score / pointTarget) * 100));
-  const barColor = score < 0 ? '#e74c3c' : score >= pointTarget ? '#22c55e' : '#6366f1';
-  h += `<div class="progress-wrap" style="max-width:${BOARD_PX}px;">
-    <div class="progress-bar">
-      <div class="progress-fill" style="width:${pct}%;background:${barColor};"></div>
-    </div>
-  </div>`;
-
-  // Rules reminder
-  h += `<div class="rule-row">
-    <span class="rule-even">Even result → +1</span>
-    <span class="rule-odd">Odd result → −1</span>
-  </div>`;
-
-  // Board
-  h += `<div class="board-wrap"><div class="board" id="board" style="grid-template-columns:repeat(${SIZE},${CELL}px);grid-template-rows:repeat(${SIZE},${CELL}px);width:${BOARD_PX}px;">`;
-
-  for (let r = 0; r < SIZE; r++) {
-    for (let c = 0; c < SIZE; c++) {
-      const cell = grid[r][c];
-      const isValid = valid.has(`${r},${c}`);
-      const isSel = selected && selected.row === r && selected.col === c;
-
-      if (cell.type === "number") {
-        const col = numColor(cell.value);
-        h += `<div class="cell cell-number ${isSel ? 'selected' : ''} ${cell.isNew ? 'new-tile' : ''} ${isValid ? 'valid-move' : ''}"
-          style="width:${CELL}px;height:${CELL}px;background:${col.bg};color:${col.c};font-size:${Math.floor(CELL * 0.48)}px;"
-          onclick="handleClick(${r},${c})">${cell.value}</div>`;
-      }
-      else if (cell.type === "operation") {
-        h += `<div class="cell cell-operation ${isValid ? 'valid-move' : ''}"
-          style="width:${CELL}px;height:${CELL}px;font-size:${Math.floor(CELL * 0.45)}px;"
-          onclick="handleClick(${r},${c})">${cell.op}</div>`;
-      }
-      else if (cell.type === "locked") {
-        h += `<div class="cell cell-locked ${isValid ? 'valid-move' : ''}"
-          style="width:${CELL}px;height:${CELL}px;"
-          onclick="handleClick(${r},${c})">
-          <span class="locked-num" style="font-size:${Math.floor(CELL * 0.34)}px;">${cell.value}</span>
-          <span class="locked-op" style="font-size:${Math.floor(CELL * 0.2)}px;">${cell.op} ?</span>
-        </div>`;
-      }
-      else if (cell.type === "blank") {
-        // Persistent blank from a 0 result — can move into
-        h += `<div class="cell cell-blank ${isValid ? 'valid-move' : ''}"
-          style="width:${CELL}px;height:${CELL}px;"
-          onclick="handleClick(${r},${c})"></div>`;
-      }
-      else {
-        // Temporary empty (gets auto-filled)
-        h += `<div class="cell cell-empty"
-          style="width:${CELL}px;height:${CELL}px;"></div>`;
-      }
-    }
-  }
-  h += `</div>`; // board
-
-  // Menu overlay
-  if (gameState === "menu") {
-    h += `<div class="overlay">
-      <div class="overlay-icon">🧮</div>
-      <div class="overlay-title">Mod2</div>
-      <div class="overlay-text">
-        Tap a <strong>number</strong>, then tap an adjacent <span style="color:#6366f1;font-weight:600">operation</span> to lock it in.
-        Tap another adjacent number to complete the math.<br><br>
-        <span style="color:#3b82f6;font-weight:600">Even result</span> → +1 point &nbsp;
-        <span style="color:#e74c3c;font-weight:600">Odd result</span> → −1 point<br>
-        <strong>Result of 0</strong> → opens a space to move through!
-      </div>
-      <button class="btn btn-primary" onclick="startGame()">Start Game</button>
-    </div>`;
-  }
-
-  // Win overlay
-  if (gameState === "won") {
-    h += `<div class="overlay">
-      <div class="overlay-icon">🎉</div>
-      <div class="overlay-title">Level ${level} Complete!</div>
-      <div class="overlay-text">
-        Reached ${pointTarget} points in <strong style="color:#6366f1">${opsUsed}</strong> operation${opsUsed !== 1 ? 's' : ''}!<br>
-        ${opsUsed <= pointTarget ? '<span style="color:#22c55e;font-weight:600">Efficient! 🔥</span>' : 'Can you do it in fewer moves?'}
-      </div>
-      <button class="btn btn-primary" onclick="nextLevel()">Next Level →</button>
-      <button class="btn btn-secondary" onclick="level=0;score=0;opsUsed=0;initGame();startGame();">Restart</button>
-    </div>`;
-  }
-
-  // Loss overlay
-  if (gameState === "lost") {
-    h += `<div class="overlay">
-      <div class="overlay-icon">💥</div>
-      <div class="overlay-title">No Moves Left!</div>
-      <div class="overlay-text">
-        No numbers can reach an operation.<br>
-        Score: <strong>${score}</strong> / ${pointTarget}<br>
-        Operations used: <strong>${opsUsed}</strong>
-      </div>
-      <button class="btn btn-primary" onclick="opsUsed=0;score=0;initGame();startGame();">Try Again</button>
-    </div>`;
-  }
-
-  h += `</div>`; // board-wrap
-
-  // Action buttons
-  h += `<div class="action-row">
-    <button class="btn-small ${undoState ? '' : 'disabled'}" onclick="undo()">↩ Undo</button>
-    <button class="btn-small ${showHistory ? 'active' : ''}" onclick="showHistory=!showHistory;render();">📋 History</button>
-  </div>`;
-
-  // History panel
-  if (showHistory) {
-    h += `<div class="history-panel">`;
-    if (moveHistory.length === 0) {
-      h += `<div class="history-empty">No moves yet</div>`;
-    } else {
-      for (let i = moveHistory.length - 1; i >= 0; i--) {
-        const m = moveHistory[i];
-        const ptsClass = m.points > 0 ? 'pos' : m.points < 0 ? 'neg' : 'neutral';
-        const ptsStr = m.points > 0 ? `+${m.points}` : m.points < 0 ? `${m.points}` : '—';
-        h += `<div class="history-item">
-          <span class="history-desc">${m.desc}</span>
-          <span class="history-pts ${ptsClass}">${ptsStr}</span>
-          <span class="history-score">= ${m.scoreAfter}</span>
-        </div>`;
-      }
-    }
-    h += `</div>`;
-  }
-
-  // Rules
-  h += `<div class="rules"><ol>
-    <li>Tap a <strong>number</strong>, then tap an adjacent <strong style="color:#6366f1">operation</strong> (+, −, ×, ÷) to lock it in</li>
-    <li>Tap another adjacent <strong>number</strong> to complete the math — the result splits into digit tiles</li>
-    <li><span style="color:#3b82f6;font-weight:600">Even results</span> score +1 point, <span style="color:#e74c3c;font-weight:600">odd results</span> cost −1 point</li>
-    <li>A result of <strong>0</strong> creates a blank space — move tiles through blanks to reposition</li>
-    <li>Reach the <strong style="color:#6366f1">goal score</strong> to advance — if you run out of operations, it's game over</li>
-  </ol></div>`;
-
-  app.innerHTML = h;
-  boardEl = document.getElementById("board");
-
-  // Clear isNew
-  setTimeout(() => {
-    for (let r = 0; r < SIZE; r++)
-      for (let c = 0; c < SIZE; c++)
-        if (grid[r][c].isNew) grid[r][c].isNew = false;
-  }, 300);
-}
-
-initGame();
+initLvl(1);
 </script>
 </body>
 </html>
