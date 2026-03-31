@@ -139,6 +139,14 @@
   .lu-btn { display: block; margin: 0 auto; font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--coal); background: linear-gradient(145deg, var(--gold-bright), var(--gold), var(--whiskey)); border: none; border-radius: 8px; padding: 12px 36px; cursor: pointer; box-shadow: 0 4px 16px rgba(201,168,76,0.3); transition: all 0.2s ease; }
   .lu-btn:hover { transform: scale(1.04); box-shadow: 0 6px 24px rgba(201,168,76,0.4); }
 
+  /* Game Over overlay */
+  .go-title { font-family: 'Playfair Display', serif; font-weight: 900; font-size: 36px; color: var(--parchment); text-align: center; margin-bottom: 4px; }
+  .go-sub { font-family: 'Cormorant Garamond', serif; font-size: 16px; color: var(--parchment-dark); text-align: center; margin-bottom: 20px; font-style: italic; letter-spacing: 1px; }
+
+  /* Goal hint below board */
+  .goal-hint { width: 100%; max-width: 560px; padding: 8px 20px 2px; z-index: 10; text-align: center; font-family: 'Cormorant Garamond', serif; font-size: 12px; color: var(--parchment-dark); font-style: italic; letter-spacing: 0.5px; line-height: 1.6; }
+  .goal-hint strong { color: var(--parchment-dim); font-style: normal; }
+
   .footer { padding: 10px; font-size: 10px; color: rgba(158,142,118,0.3); letter-spacing: 2px; text-transform: uppercase; font-family: 'Cormorant Garamond', serif; z-index: 10; }
 </style>
 </head>
@@ -176,6 +184,11 @@
 
 <div class="board-frame"><div class="board-felt" id="board"></div></div>
 
+<div class="goal-hint">
+  <strong>Select a number</strong> → tap an <strong>operation</strong> to lock it → tap a <strong>second number</strong> to compute. 
+  Form the <strong>target</strong> in any 2×2 area to score. Level up by matching enough targets.
+</div>
+
 <div class="controls">
   <button class="btn" id="btn-help">How to Play</button>
   <button class="btn" id="btn-new">Restart</button>
@@ -194,6 +207,19 @@
       <div class="op-legend-item"><div class="op-swatch div">÷</div> Division</div>
     </div>
     <p class="overlay-hint">Tap anywhere to close</p>
+  </div>
+</div>
+
+<div class="overlay" id="ov-go">
+  <div class="overlay-card" style="text-align:center;">
+    <div class="go-title">No Moves Left</div>
+    <div class="go-sub">The board has run dry</div>
+    <div class="lu-stats">
+      <div class="lu-stat"><div class="sn" id="go-sc">0</div><div class="sl">Final Score</div></div>
+      <div class="lu-stat"><div class="sn" id="go-lv">1</div><div class="sl">Level</div></div>
+      <div class="lu-stat"><div class="sn" id="go-mv">0</div><div class="sl">Moves</div></div>
+    </div>
+    <button class="lu-btn" id="btn-go">Play Again</button>
   </div>
 </div>
 
@@ -314,6 +340,8 @@ function tapNum(r,c){
     for(let rr=0;rr<g;rr++) for(let cc=0;cc<g;cc++) if(!S.board[rr][cc]) S.board[rr][cc]=Math.random()<S.cfg.refillOp?{type:'op',value:OPS[ri(0,3)],fn:null}:{type:'num',value:ri(1,S.cfg.mx)};
     S.moves++; S.opL=null; S.sel=null;
     checkT(); render();
+    // Check for game over after render
+    if(!hasMovesLeft()) setTimeout(()=>showGameOver(), 600);
     setTimeout(()=>{for(let rr=0;rr<g;rr++) for(let cc=0;cc<g;cc++) if(S.board[rr][cc]&&S.board[rr][cc].merged) S.board[rr][cc].merged=false;},400);
   } else { S.sel={r,c}; render(); }
 }
@@ -349,6 +377,28 @@ function checkT(){
   }
 }
 
+function hasMovesLeft(){
+  const g=S.cfg.g;
+  // Check if there's at least one unused op (fn===null) AND at least one number tile
+  let hasOp=false, hasNum=false;
+  for(let r=0;r<g;r++) for(let c=0;c<g;c++){
+    const t=S.board[r][c];
+    if(t&&t.type==='op'&&t.fn===null) hasOp=true;
+    if(t&&t.type==='num') hasNum=true;
+    if(hasOp&&hasNum) return true;
+  }
+  // Also still playable if an op is waiting for a second number
+  if(S.opL) return hasNum;
+  return false;
+}
+
+function showGameOver(){
+  document.getElementById('go-sc').textContent=S.score;
+  document.getElementById('go-lv').textContent=S.level;
+  document.getElementById('go-mv').textContent=S.moves;
+  document.getElementById('ov-go').classList.add('active');
+}
+
 function showLU(){
   const nl=S.level+1, nc=lvlCfg(nl);
   document.getElementById('lu-t').textContent=`Level ${nl}`;
@@ -361,6 +411,7 @@ function showLU(){
 }
 
 document.getElementById('btn-lu').onclick=()=>{document.getElementById('ov-lu').classList.remove('active'); initLvl(S.level+1);};
+document.getElementById('btn-go').onclick=()=>{document.getElementById('ov-go').classList.remove('active'); S.score=0; S.moves=0; S.resultCells=[]; initLvl(1);};
 document.getElementById('btn-new').onclick=()=>{S.score=0; S.moves=0; S.resultCells=[]; initLvl(1);};
 document.getElementById('btn-help').onclick=()=>document.getElementById('ov-help').classList.add('active');
 document.getElementById('ov-help').onclick=()=>document.getElementById('ov-help').classList.remove('active');
