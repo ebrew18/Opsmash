@@ -185,8 +185,8 @@
 <div class="board-frame"><div class="board-felt" id="board"></div></div>
 
 <div class="goal-hint">
-  <strong>Select a number</strong> → tap an <strong>operation</strong> to lock it → tap a <strong>second number</strong> to compute. 
-  Form the <strong>target</strong> in any 2×2 area to score. Level up by matching enough targets.
+  <strong>Select a number</strong> adjacent to an <strong>operation</strong> to lock it in → tap a <strong>second adjacent number</strong> to compute. 
+  Form the <strong>target</strong> in any 2×2 area to score. Numbers must be directly above, below, or beside the operation — no diagonals.
 </div>
 
 <div class="controls">
@@ -197,9 +197,9 @@
 <div class="overlay" id="ov-help">
   <div class="overlay-card">
     <h2>How to Play</h2>
-    <p>Tap a <strong>number tile</strong>, then tap an <strong>operation tile</strong> to lock it in. Tap a second number to complete the operation.</p>
-    <p>Results split into digit tiles. Craft the <strong>target number</strong> within a 2×2 area to score.</p>
-    <p>Match enough targets to <strong>level up</strong> — the board grows and targets get bigger. How far can you go?</p>
+    <p>Tap a <strong>number tile</strong> next to an <strong>operation tile</strong> to lock it in. Then tap a second number on the other side of the operation to compute the result.</p>
+    <p>Numbers must be <strong>directly adjacent</strong> (top, bottom, left, or right) to the operation — no diagonals.</p>
+    <p>Results split into digit tiles. Craft the <strong>target number</strong> within a 2×2 area to score. Match enough targets to <strong>level up</strong> — the board grows and targets get bigger.</p>
     <div class="op-legend">
       <div class="op-legend-item"><div class="op-swatch add">+</div> Addition</div>
       <div class="op-legend-item"><div class="op-swatch sub">−</div> Subtraction</div>
@@ -254,10 +254,11 @@ function lvlCfg(l){
   else if(l===6) pool=[30,36,40,42,45,48,50,54,56];
   else { const b=30+(l-6)*8; pool=[]; for(let i=0;i<8;i++) pool.push(b+i*Math.ceil(l*0.8)); }
   const mx=Math.min(9,5+Math.floor(l*0.7));
-  // Ops: generous at early levels, thinning out as difficulty rises
-  const initOpRatio=Math.max(0.15, 0.50 - (l-1) * 0.06); // L1: 50%, L2: 44%, L3: 38%... L6+: ~15-20%
-  const refillOp=Math.max(0.08, 0.33 - (l-1) * 0.05);     // L1: 33%, L2: 28%, L3: 23%... L6+: ~8-10%
-  return {g,mn,pool,mx,initOpRatio,refillOp};
+  const initOpRatio=Math.max(0.15, 0.50 - (l-1) * 0.06);
+  // Min ops the board guarantees (decreases with level = harder)
+  const minOps=Math.max(2, Math.ceil(g * (1.2 - (l-1)*0.08)));
+  const refillOp=Math.max(0.05, 0.20 - (l-1) * 0.03);
+  return {g,mn,pool,mx,initOpRatio,refillOp,minOps};
 }
 
 let S={board:[],level:1,score:0,best:0,moves:0,target:8,matches:0,sel:null,opL:null,cfg:null,resultCells:[]};
@@ -265,24 +266,58 @@ const ri=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
 
 function pickT(){ const p=S.cfg.pool; return p[ri(0,p.length-1)]; }
 
+function isAdj(r1,c1,r2,c2){ return Math.abs(r1-r2)+Math.abs(c1-c2)===1; }
+
+// Ensure board maintains minimum ops — converts number tiles with adjacent numbers into ops
+function enforceMinOps(){
+  const g=S.cfg.g;
+  let freeOps=0;
+  for(let r=0;r<g;r++) for(let c=0;c<g;c++){
+    const t=S.board[r][c];
+    if(t&&t.type==='op'&&t.fn===null) freeOps++;
+  }
+  if(freeOps>=S.cfg.minOps) return;
+  let candidates=[];
+  for(let r=0;r<g;r++) for(let c=0;c<g;c++){
+    if(S.board[r][c]&&S.board[r][c].type==='num'){
+      const dirs=[[r-1,c],[r+1,c],[r,c-1],[r,c+1]];
+      const adjNums=dirs.filter(([nr,nc])=>nr>=0&&nr<g&&nc>=0&&nc<g&&S.board[nr][nc]&&S.board[nr][nc].type==='num').length;
+      if(adjNums>=1) candidates.push({r,c,adjNums});
+    }
+  }
+  // Don't convert result-glowing tiles if possible
+  const nonResult=candidates.filter(cd=>!S.resultCells.some(rc=>rc.r===cd.r&&rc.c===cd.c));
+  const pool=nonResult.length>0?nonResult:candidates;
+  pool.sort((a,b)=>b.adjNums-a.adjNums);
+  for(let i=0;i<pool.length&&freeOps<S.cfg.minOps;i++){
+    const {r,c}=pool[i];
+    if(S.board[r][c]&&S.board[r][c].type==='num'){
+      S.board[r][c]={type:'op',value:OPS[ri(0,3)],fn:null};
+      freeOps++;
+    }
+  }
+}
+
 function initLvl(l){
   S.level=l; S.cfg=lvlCfg(l); S.matches=0; S.sel=null; S.opL=null; S.target=pickT(); S.resultCells=[];
   const g=S.cfg.g;
   document.documentElement.style.setProperty('--grid-cols',g);
   const sz={3:'min(70vw,340px)',4:'min(76vw,380px)',5:'min(82vw,420px)',6:'min(86vw,460px)',7:'min(90vw,490px)',8:'min(92vw,520px)'};
   document.documentElement.style.setProperty('--board-size',sz[g]||sz[8]);
-  // Fill board with all numbers first
   S.board=[];
   for(let r=0;r<g;r++){S.board[r]=[];for(let c=0;c<g;c++){
     S.board[r][c]={type:'num',value:ri(1,S.cfg.mx)};
   }}
-  // Place ops based on initOpRatio (high early, low late)
+  // Place ops — only where they'll have at least one adjacent number
   const totalCells=g*g, opCount=Math.max(g+1, Math.round(totalCells * S.cfg.initOpRatio));
   const indices=[]; for(let i=0;i<totalCells;i++) indices.push(i);
   for(let i=indices.length-1;i>0;i--){const j=ri(0,i);[indices[i],indices[j]]=[indices[j],indices[i]];}
-  for(let i=0;i<opCount&&i<totalCells-2;i++){
+  let placed=0;
+  for(let i=0;i<indices.length&&placed<opCount&&placed<totalCells-3;i++){
     const idx=indices[i], r=Math.floor(idx/g), c=idx%g;
-    S.board[r][c]={type:'op',value:OPS[ri(0,3)],fn:null};
+    const dirs=[[r-1,c],[r+1,c],[r,c-1],[r,c+1]];
+    const hasAdjNum=dirs.some(([nr,nc])=>nr>=0&&nr<g&&nc>=0&&nc<g&&S.board[nr][nc]&&S.board[nr][nc].type==='num');
+    if(hasAdjNum){ S.board[r][c]={type:'op',value:OPS[ri(0,3)],fn:null}; placed++; }
   }
   render();
 }
@@ -321,6 +356,8 @@ function render(){
 function tapNum(r,c){
   const g=S.cfg.g;
   if(S.opL){
+    // Adjacency check — second number must be adjacent to the locked op
+    if(!isAdj(r,c,S.opL.r,S.opL.c)){ S.sel=null; render(); return; }
     const op=S.board[S.opL.r][S.opL.c], a=op.fn, b=S.board[r][c].value;
     let res;
     switch(op.value){ case'+':res=a+b;break; case'−':res=a-b;break; case'×':res=a*b;break; case'÷':res=b?Math.round((a/b)*10)/10:0;break; }
@@ -336,8 +373,10 @@ function tapNum(r,c){
       S.board[pl[i].r][pl[i].c]={type:'num',value:digs[i],merged:true};
       S.resultCells.push({r:pl[i].r,c:pl[i].c});
     }
-    // Refill empties — ops can respawn at level-dependent rate (generous early, scarce late)
+    // Refill empties
     for(let rr=0;rr<g;rr++) for(let cc=0;cc<g;cc++) if(!S.board[rr][cc]) S.board[rr][cc]=Math.random()<S.cfg.refillOp?{type:'op',value:OPS[ri(0,3)],fn:null}:{type:'num',value:ri(1,S.cfg.mx)};
+    // Enforce minimum ops on board
+    enforceMinOps();
     S.moves++; S.opL=null; S.sel=null;
     checkT(); render();
     // Check for game over after render
@@ -350,6 +389,8 @@ function tapOp(r,c){
   if(!S.sel) return;
   const num=S.board[S.sel.r][S.sel.c];
   if(!num||num.type!=='num') return;
+  // Adjacency check — selected number must be orthogonally adjacent to op
+  if(!isAdj(S.sel.r,S.sel.c,r,c)){ S.sel=null; render(); return; }
   S.board[r][c].fn=num.value;
   // Consumed number cell refills — chance to become a new op
   S.board[S.sel.r][S.sel.c]=Math.random()<S.cfg.refillOp?{type:'op',value:OPS[ri(0,3)],fn:null}:{type:'num',value:ri(1,S.cfg.mx)};
@@ -369,6 +410,7 @@ function checkT(){
         const se=document.getElementById('score'); se.classList.remove('score-pop-anim'); void se.offsetWidth; se.classList.add('score-pop-anim');
         S.board[r][c]=null; S.board[r][c+1]=null; S.board[r+1][c]=null; S.board[r+1][c+1]=null;
         for(let rr=r;rr<=r+1;rr++) for(let cc=c;cc<=c+1;cc++) S.board[rr][cc]=Math.random()<S.cfg.refillOp?{type:'op',value:OPS[ri(0,3)],fn:null}:{type:'num',value:ri(1,S.cfg.mx),merged:true};
+        enforceMinOps();
         if(S.matches>=S.cfg.mn) setTimeout(()=>showLU(),500);
         else S.target=pickT();
         return;
@@ -379,16 +421,24 @@ function checkT(){
 
 function hasMovesLeft(){
   const g=S.cfg.g;
-  // Check if there's at least one unused op (fn===null) AND at least one number tile
-  let hasOp=false, hasNum=false;
+  // An op waiting for second number — just needs 1 adjacent number
+  if(S.opL){
+    const dirs=[[S.opL.r-1,S.opL.c],[S.opL.r+1,S.opL.c],[S.opL.r,S.opL.c-1],[S.opL.r,S.opL.c+1]];
+    for(const [nr,nc] of dirs){
+      if(nr>=0&&nr<g&&nc>=0&&nc<g&&S.board[nr][nc]&&S.board[nr][nc].type==='num') return true;
+    }
+    return false;
+  }
+  // Check if any free op has at least 1 adjacent number (player can start the move)
   for(let r=0;r<g;r++) for(let c=0;c<g;c++){
     const t=S.board[r][c];
-    if(t&&t.type==='op'&&t.fn===null) hasOp=true;
-    if(t&&t.type==='num') hasNum=true;
-    if(hasOp&&hasNum) return true;
+    if(t&&t.type==='op'&&t.fn===null){
+      const dirs=[[r-1,c],[r+1,c],[r,c-1],[r,c+1]];
+      for(const [nr,nc] of dirs){
+        if(nr>=0&&nr<g&&nc>=0&&nc<g&&S.board[nr][nc]&&S.board[nr][nc].type==='num') return true;
+      }
+    }
   }
-  // Also still playable if an op is waiting for a second number
-  if(S.opL) return hasNum;
   return false;
 }
 
