@@ -82,21 +82,26 @@
 
   .cell { border-radius: 4px; display: flex; align-items: center; justify-content: center; position: relative; transition: transform 0.15s ease; background: rgba(50,32,20,0.35); border: 1px solid rgba(80,55,35,0.15); }
   .cell.empty { background: rgba(50,32,20,0.2); border-color: rgba(80,55,35,0.08); }
-  .cell.number { background: linear-gradient(145deg, #4A3628, #3B2A1E); border: 1px solid rgba(201,168,76,0.1); box-shadow: 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04); cursor: pointer; }
-  .cell.number:hover { border-color: rgba(201,168,76,0.3); box-shadow: 0 2px 8px rgba(0,0,0,0.4), 0 0 12px var(--glow), inset 0 1px 0 rgba(255,255,255,0.06); }
-  .cell.number .tile-text { font-family: 'Playfair Display', serif; font-weight: 700; font-size: clamp(14px, 3.5vw, 22px); color: var(--cream); text-shadow: 0 1px 2px rgba(0,0,0,0.4); }
-  .cell.number.selected { border-color: var(--gold); box-shadow: 0 0 0 2px rgba(201,168,76,0.25), 0 0 16px rgba(201,168,76,0.2), 0 4px 12px rgba(0,0,0,0.4); transform: scale(1.08); z-index: 5; background: linear-gradient(145deg, #5A4232, #4A3426); }
+  .cell.number { background: linear-gradient(145deg, #5E4435, #4D362A); border: 1px solid rgba(201,168,76,0.14); box-shadow: 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.06); cursor: pointer; }
+  .cell.number:hover { border-color: rgba(201,168,76,0.3); box-shadow: 0 2px 8px rgba(0,0,0,0.4), 0 0 12px var(--glow), inset 0 1px 0 rgba(255,255,255,0.08); }
+  .cell.number .tile-text { font-family: 'Playfair Display', serif; font-weight: 900; font-size: clamp(15px, 3.8vw, 24px); color: #FFF8EE; text-shadow: 0 0 6px rgba(255,248,238,0.3), 0 1px 3px rgba(0,0,0,0.6), 0 0 1px rgba(0,0,0,0.8); letter-spacing: 0.5px; }
+  .cell.number.selected { border-color: var(--gold); box-shadow: 0 0 0 2px rgba(201,168,76,0.25), 0 0 16px rgba(201,168,76,0.2), 0 4px 12px rgba(0,0,0,0.4); transform: scale(1.08); z-index: 5; background: linear-gradient(145deg, #6E5240, #5A4232); }
+
+  /* Result glow — warm amber highlight for most recent operation result */
+  @keyframes result-pulse { 0%,100% { box-shadow: 0 0 8px rgba(212,148,58,0.4), 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.06); } 50% { box-shadow: 0 0 14px rgba(212,148,58,0.55), 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.06); } }
+  .cell.number.result-glow { background: linear-gradient(145deg, #6B4A2E, #5A3D26); border-color: rgba(212,148,58,0.5); animation: result-pulse 2s ease-in-out infinite; }
+  .cell.number.result-glow .tile-text { color: #FFE8C8; text-shadow: 0 0 8px rgba(255,232,200,0.4), 0 1px 3px rgba(0,0,0,0.6), 0 0 1px rgba(0,0,0,0.8); }
 
   .cell.op { cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.06); }
-  .cell.op .tile-text { font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(16px, 4vw, 26px); text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
-  .cell.op-add { background: linear-gradient(145deg, #3D6B4A, #2E5238); border-color: rgba(74,124,89,0.3); }
-  .cell.op-add .tile-text { color: #A8D5B5; }
-  .cell.op-sub { background: linear-gradient(145deg, #7A3540, #5E2830); border-color: rgba(139,64,73,0.3); }
-  .cell.op-sub .tile-text { color: #D4A0A7; }
-  .cell.op-mul { background: linear-gradient(145deg, #3E4D7A, #2E3A5E); border-color: rgba(74,90,139,0.3); }
-  .cell.op-mul .tile-text { color: #A8B5D5; }
-  .cell.op-div { background: linear-gradient(145deg, #6B5535, #524028); border-color: rgba(123,101,64,0.3); }
-  .cell.op-div .tile-text { color: #D5C5A0; }
+  .cell.op .tile-text { font-family: 'Playfair Display', serif; font-weight: 900; font-size: clamp(17px, 4.2vw, 28px); text-shadow: 0 0 5px rgba(255,255,255,0.15), 0 1px 3px rgba(0,0,0,0.5); }
+  .cell.op-add { background: linear-gradient(145deg, #478C56, #366A42); border-color: rgba(74,124,89,0.35); }
+  .cell.op-add .tile-text { color: #C8F0D2; }
+  .cell.op-sub { background: linear-gradient(145deg, #8E3E4A, #6E2E38); border-color: rgba(139,64,73,0.35); }
+  .cell.op-sub .tile-text { color: #E8BCC2; }
+  .cell.op-mul { background: linear-gradient(145deg, #485C8E, #364570); border-color: rgba(74,90,139,0.35); }
+  .cell.op-mul .tile-text { color: #C0CBE8; }
+  .cell.op-div { background: linear-gradient(145deg, #7E6440, #604D30); border-color: rgba(123,101,64,0.35); }
+  .cell.op-div .tile-text { color: #E8D8B8; }
   .cell.op.has-first { box-shadow: 0 0 0 1px rgba(201,168,76,0.2), 0 0 10px rgba(201,168,76,0.12), 0 2px 6px rgba(0,0,0,0.4); }
   .cell.op .locked-num { position: absolute; top: 1px; right: 3px; font-family: 'JetBrains Mono', monospace; font-size: clamp(7px, 1.6vw, 11px); color: rgba(245,240,230,0.6); font-weight: 600; }
 
@@ -118,10 +123,10 @@
   .op-legend { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 14px 0; }
   .op-legend-item { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--parchment-dim); }
   .op-swatch { width: 24px; height: 24px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; font-weight: 600; font-size: 14px; }
-  .op-swatch.add { background: linear-gradient(145deg, #3D6B4A, #2E5238); color: #A8D5B5; }
-  .op-swatch.sub { background: linear-gradient(145deg, #7A3540, #5E2830); color: #D4A0A7; }
-  .op-swatch.mul { background: linear-gradient(145deg, #3E4D7A, #2E3A5E); color: #A8B5D5; }
-  .op-swatch.div { background: linear-gradient(145deg, #6B5535, #524028); color: #D5C5A0; }
+  .op-swatch.add { background: linear-gradient(145deg, #478C56, #366A42); color: #C8F0D2; }
+  .op-swatch.sub { background: linear-gradient(145deg, #8E3E4A, #6E2E38); color: #E8BCC2; }
+  .op-swatch.mul { background: linear-gradient(145deg, #485C8E, #364570); color: #C0CBE8; }
+  .op-swatch.div { background: linear-gradient(145deg, #7E6440, #604D30); color: #E8D8B8; }
   .overlay-hint { font-style: italic; font-size: 12px; color: var(--parchment-dark); text-align: center; margin-top: 8px; }
 
   @keyframes shimmer { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
@@ -222,26 +227,37 @@ function lvlCfg(l){
   else if(l===5) pool=[25,30,32,35,36,40,42,45];
   else if(l===6) pool=[30,36,40,42,45,48,50,54,56];
   else { const b=30+(l-6)*8; pool=[]; for(let i=0;i<8;i++) pool.push(b+i*Math.ceil(l*0.8)); }
-  const opc=Math.min(0.15+l*0.015,0.28);
   const mx=Math.min(9,5+Math.floor(l*0.7));
-  return {g,mn,pool,opc,mx};
+  // Ops: generous at early levels, thinning out as difficulty rises
+  const initOpRatio=Math.max(0.15, 0.50 - (l-1) * 0.06); // L1: 50%, L2: 44%, L3: 38%... L6+: ~15-20%
+  const refillOp=Math.max(0.08, 0.33 - (l-1) * 0.05);     // L1: 33%, L2: 28%, L3: 23%... L6+: ~8-10%
+  return {g,mn,pool,mx,initOpRatio,refillOp};
 }
 
-let S={board:[],level:1,score:0,best:0,moves:0,target:8,matches:0,sel:null,opL:null,cfg:null};
+let S={board:[],level:1,score:0,best:0,moves:0,target:8,matches:0,sel:null,opL:null,cfg:null,resultCells:[]};
 const ri=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
 
 function pickT(){ const p=S.cfg.pool; return p[ri(0,p.length-1)]; }
 
 function initLvl(l){
-  S.level=l; S.cfg=lvlCfg(l); S.matches=0; S.sel=null; S.opL=null; S.target=pickT();
+  S.level=l; S.cfg=lvlCfg(l); S.matches=0; S.sel=null; S.opL=null; S.target=pickT(); S.resultCells=[];
   const g=S.cfg.g;
   document.documentElement.style.setProperty('--grid-cols',g);
   const sz={3:'min(70vw,340px)',4:'min(76vw,380px)',5:'min(82vw,420px)',6:'min(86vw,460px)',7:'min(90vw,490px)',8:'min(92vw,520px)'};
   document.documentElement.style.setProperty('--board-size',sz[g]||sz[8]);
+  // Fill board with all numbers first
   S.board=[];
   for(let r=0;r<g;r++){S.board[r]=[];for(let c=0;c<g;c++){
-    S.board[r][c]=Math.random()<S.cfg.opc?{type:'op',value:OPS[ri(0,3)],fn:null}:{type:'num',value:ri(1,S.cfg.mx)};
+    S.board[r][c]={type:'num',value:ri(1,S.cfg.mx)};
   }}
+  // Place ops based on initOpRatio (high early, low late)
+  const totalCells=g*g, opCount=Math.max(g+1, Math.round(totalCells * S.cfg.initOpRatio));
+  const indices=[]; for(let i=0;i<totalCells;i++) indices.push(i);
+  for(let i=indices.length-1;i>0;i--){const j=ri(0,i);[indices[i],indices[j]]=[indices[j],indices[i]];}
+  for(let i=0;i<opCount&&i<totalCells-2;i++){
+    const idx=indices[i], r=Math.floor(idx/g), c=idx%g;
+    S.board[r][c]={type:'op',value:OPS[ri(0,3)],fn:null};
+  }
   render();
 }
 
@@ -252,7 +268,8 @@ function render(){
     if(!t){d.className='cell empty';}
     else if(t.type==='num'){
       const isSel=S.sel&&S.sel.r===r&&S.sel.c===c;
-      d.className=`cell number${isSel?' selected':''}${t.merged?' merged':''}`;
+      const isResult=S.resultCells.some(rc=>rc.r===r&&rc.c===c);
+      d.className=`cell number${isSel?' selected':''}${t.merged?' merged':''}${isResult?' result-glow':''}`;
       d.innerHTML=`<span class="tile-text">${t.value}</span>`;
       d.onclick=()=>tapNum(r,c);
     } else {
@@ -287,8 +304,14 @@ function tapNum(r,c){
     const pl=[{r:S.opL.r,c:S.opL.c}];
     const nb=[{r:S.opL.r-1,c:S.opL.c},{r:S.opL.r+1,c:S.opL.c},{r:S.opL.r,c:S.opL.c-1},{r:S.opL.r,c:S.opL.c+1}].filter(n=>n.r>=0&&n.r<g&&n.c>=0&&n.c<g&&!S.board[n.r][n.c]);
     for(let i=1;i<digs.length&&i<=nb.length;i++) pl.push(nb[i-1]);
-    for(let i=0;i<digs.length&&i<pl.length;i++) S.board[pl[i].r][pl[i].c]={type:'num',value:digs[i],merged:true};
-    for(let rr=0;rr<g;rr++) for(let cc=0;cc<g;cc++) if(!S.board[rr][cc]) S.board[rr][cc]=Math.random()<S.cfg.opc?{type:'op',value:OPS[ri(0,3)],fn:null}:{type:'num',value:ri(1,S.cfg.mx)};
+    // Clear previous result highlight, set new
+    S.resultCells=[];
+    for(let i=0;i<digs.length&&i<pl.length;i++){
+      S.board[pl[i].r][pl[i].c]={type:'num',value:digs[i],merged:true};
+      S.resultCells.push({r:pl[i].r,c:pl[i].c});
+    }
+    // Refill empties — ops can respawn at level-dependent rate (generous early, scarce late)
+    for(let rr=0;rr<g;rr++) for(let cc=0;cc<g;cc++) if(!S.board[rr][cc]) S.board[rr][cc]=Math.random()<S.cfg.refillOp?{type:'op',value:OPS[ri(0,3)],fn:null}:{type:'num',value:ri(1,S.cfg.mx)};
     S.moves++; S.opL=null; S.sel=null;
     checkT(); render();
     setTimeout(()=>{for(let rr=0;rr<g;rr++) for(let cc=0;cc<g;cc++) if(S.board[rr][cc]&&S.board[rr][cc].merged) S.board[rr][cc].merged=false;},400);
@@ -300,8 +323,9 @@ function tapOp(r,c){
   const num=S.board[S.sel.r][S.sel.c];
   if(!num||num.type!=='num') return;
   S.board[r][c].fn=num.value;
-  S.board[S.sel.r][S.sel.c]={type:'num',value:ri(1,S.cfg.mx)};
-  S.opL={r,c}; S.sel=null; render();
+  // Consumed number cell refills — chance to become a new op
+  S.board[S.sel.r][S.sel.c]=Math.random()<S.cfg.refillOp?{type:'op',value:OPS[ri(0,3)],fn:null}:{type:'num',value:ri(1,S.cfg.mx)};
+  S.opL={r,c}; S.sel=null; S.resultCells=[]; render();
 }
 
 function checkT(){
@@ -313,9 +337,10 @@ function checkT(){
       const combos=[d[0]*1000+d[1]*100+d[2]*10+d[3],d[0]*100+d[1]*10+d[2],d[2]*100+d[3]*10+d[0],d[0]*10+d[1],d[2]*10+d[3],d[0]*10+d[2],d[1]*10+d[3],d[0],d[1],d[2],d[3]];
       if(combos.includes(S.target)){
         S.score+=S.target; if(S.score>S.best) S.best=S.score; S.matches++;
+        S.resultCells=[];
         const se=document.getElementById('score'); se.classList.remove('score-pop-anim'); void se.offsetWidth; se.classList.add('score-pop-anim');
         S.board[r][c]=null; S.board[r][c+1]=null; S.board[r+1][c]=null; S.board[r+1][c+1]=null;
-        for(let rr=r;rr<=r+1;rr++) for(let cc=c;cc<=c+1;cc++) S.board[rr][cc]=Math.random()<S.cfg.opc?{type:'op',value:OPS[ri(0,3)],fn:null}:{type:'num',value:ri(1,S.cfg.mx),merged:true};
+        for(let rr=r;rr<=r+1;rr++) for(let cc=c;cc<=c+1;cc++) S.board[rr][cc]=Math.random()<S.cfg.refillOp?{type:'op',value:OPS[ri(0,3)],fn:null}:{type:'num',value:ri(1,S.cfg.mx),merged:true};
         if(S.matches>=S.cfg.mn) setTimeout(()=>showLU(),500);
         else S.target=pickT();
         return;
@@ -336,7 +361,7 @@ function showLU(){
 }
 
 document.getElementById('btn-lu').onclick=()=>{document.getElementById('ov-lu').classList.remove('active'); initLvl(S.level+1);};
-document.getElementById('btn-new').onclick=()=>{S.score=0; S.moves=0; initLvl(1);};
+document.getElementById('btn-new').onclick=()=>{S.score=0; S.moves=0; S.resultCells=[]; initLvl(1);};
 document.getElementById('btn-help').onclick=()=>document.getElementById('ov-help').classList.add('active');
 document.getElementById('ov-help').onclick=()=>document.getElementById('ov-help').classList.remove('active');
 
