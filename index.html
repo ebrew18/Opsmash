@@ -152,6 +152,114 @@
   .lu-btn { display: block; margin: 0 auto; font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--coal); background: linear-gradient(145deg, var(--gold-bright), var(--gold), var(--whiskey)); border: none; border-radius: 8px; padding: 12px 36px; cursor: pointer; box-shadow: 0 4px 16px rgba(201,168,76,0.3); transition: all 0.2s ease; }
   .lu-btn:hover { transform: scale(1.04); box-shadow: 0 6px 24px rgba(201,168,76,0.4); }
 
+  .share-btn { display: block; margin: 10px auto 0; font-family: 'Cormorant Garamond', serif; font-size: 14px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--parchment-dim); background: none; border: 1px solid rgba(201,168,76,0.25); border-radius: 8px; padding: 10px 28px; cursor: pointer; transition: all 0.2s ease; }
+  .share-btn:hover { color: var(--gold); border-color: rgba(201,168,76,0.5); box-shadow: 0 0 12px rgba(201,168,76,0.1); }
+  .share-toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); font-family: 'Cormorant Garamond', serif; font-size: 14px; color: var(--cream); background: linear-gradient(145deg, var(--walnut), var(--walnut-dark)); border: 1px solid rgba(201,168,76,0.3); border-radius: 8px; padding: 10px 24px; z-index: 300; opacity: 0; transition: opacity 0.3s ease; pointer-events: none; letter-spacing: 1px; }
+  .share-toast.show { opacity: 1; }
+  .share-card-preview { margin: 12px auto 0; max-width: 280px; border-radius: 8px; overflow: hidden; border: 1px solid rgba(201,168,76,0.15); }
+  .share-card-preview canvas { display: block; width: 100%; height: auto; }
+
+  /* Theme picker */
+  .theme-picker-card { max-width: 420px; }
+  .theme-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 16px 0; }
+  .theme-swatch { background: none; border: 2px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 0; cursor: pointer; overflow: hidden; transition: all 0.2s ease; text-align: center; }
+  .theme-swatch:hover { border-color: rgba(255,255,255,0.2); transform: scale(1.03); }
+  .theme-swatch.active { border-color: var(--gold); box-shadow: 0 0 12px rgba(201,168,76,0.3); }
+  .swatch-preview { height: 60px; position: relative; }
+  .swatch-name { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 13px; color: var(--cream); padding: 6px 0 2px; }
+  .swatch-desc { font-family: 'Cormorant Garamond', serif; font-size: 11px; color: var(--parchment-dark); padding-bottom: 8px; font-style: italic; }
+  .academia-preview { background: linear-gradient(135deg, #3B2316, #2A180F, #1E110A); }
+  .ocean-preview { background: linear-gradient(135deg, #0A1628, #0F2440, #142E4A); }
+  .sakura-preview { background: linear-gradient(135deg, #2A1620, #1E1018, #281520); }
+  .emerald-preview { background: linear-gradient(135deg, #0E2016, #0A1A10, #14281A); }
+  .gilded-preview { background: linear-gradient(135deg, #0A0A0A, #111111, #080808); position: relative; overflow: hidden; }
+  .gilded-preview::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(201,168,76,0.06) 8px, rgba(201,168,76,0.06) 9px); }
+  .premium-badge { position: absolute; top: 6px; right: 6px; font-family: 'Playfair Display', serif; font-size: 8px; font-weight: 700; letter-spacing: 1.5px; color: #C9A84C; background: rgba(0,0,0,0.7); border: 1px solid rgba(201,168,76,0.4); border-radius: 4px; padding: 2px 6px; }
+  .premium-swatch .swatch-name { color: #E0C068; }
+  .theme-grid .premium-swatch { grid-column: 1 / -1; }
+
+  /* === THEME: OCEAN ABYSS === */
+  body[data-theme="ocean"]::before { background: repeating-linear-gradient(2deg, transparent, transparent 8px, rgba(15,36,64,0.15) 8px, rgba(15,36,64,0.15) 9px), repeating-linear-gradient(178deg, transparent, transparent 14px, rgba(20,46,74,0.08) 14px, rgba(20,46,74,0.08) 15px), radial-gradient(ellipse at 30% 20%, rgba(20,50,80,0.3) 0%, transparent 60%), radial-gradient(ellipse at 70% 80%, rgba(10,30,55,0.4) 0%, transparent 60%), linear-gradient(160deg, #0F2440 0%, #0A1628 40%, #071020 70%, #050D18 100%); }
+  body[data-theme="ocean"]::after { background: radial-gradient(ellipse at center, transparent 40%, rgba(3,8,18,0.7) 100%); }
+  body[data-theme="ocean"] { --coal: #050D18; --walnut: #122840; --walnut-dark: #0C1E35; --walnut-deeper: #081428; --parchment: #D0DEE8; --parchment-dim: #9DB4C8; --parchment-dark: #6888A0; --gold: #7BB8D0; --gold-bright: #A0D4E8; --gold-dim: #4A8AA5; --amber: #5BA0C0; --cream: #E8F2F8; --ring-stain: rgba(100,160,200,0.08); --glow: rgba(123,184,208,0.15); }
+  body[data-theme="ocean"] .board-felt { background: linear-gradient(135deg, #0A1825, #08141E, #061018); }
+  body[data-theme="ocean"] .cell { background: rgba(15,40,65,0.35); border-color: rgba(30,70,110,0.15); }
+  body[data-theme="ocean"] .cell.empty { background: rgba(15,40,65,0.2); }
+  body[data-theme="ocean"] .cell.number { background: linear-gradient(145deg, #1A3A55, #153050); }
+  body[data-theme="ocean"] .cell.number.selected { background: linear-gradient(145deg, #254A68, #1E4060); }
+  body[data-theme="ocean"] .cell.number.result-glow { background: linear-gradient(145deg, #1E4565, #183858); border-color: rgba(123,184,208,0.5); }
+  body[data-theme="ocean"] .cell.blank { background: rgba(10,25,45,0.5); border-color: rgba(155,107,213,0.15); }
+  body[data-theme="ocean"] .ring-stain, body[data-theme="ocean"] .ring-stain-2 { border-color: rgba(100,160,200,0.06); }
+  body[data-theme="ocean"] .score-box { background: linear-gradient(145deg, rgba(18,40,64,0.6), rgba(12,30,53,0.8)); }
+  body[data-theme="ocean"] .progress-fill { background: linear-gradient(90deg, #4A8AA5, #7BB8D0, #A0D4E8); }
+  body[data-theme="ocean"] .overlay-card, body[data-theme="ocean"] .theme-picker-card { background: linear-gradient(155deg, #122840, #0C1E35); }
+  body[data-theme="ocean"] .history-box { background: linear-gradient(145deg, rgba(12,30,53,0.85), rgba(8,20,40,0.9)); }
+
+  /* === THEME: SAKURA DUSK === */
+  body[data-theme="sakura"]::before { background: repeating-linear-gradient(2deg, transparent, transparent 8px, rgba(60,20,35,0.12) 8px, rgba(60,20,35,0.12) 9px), repeating-linear-gradient(178deg, transparent, transparent 14px, rgba(80,30,50,0.06) 14px, rgba(80,30,50,0.06) 15px), radial-gradient(ellipse at 30% 20%, rgba(70,25,40,0.3) 0%, transparent 60%), radial-gradient(ellipse at 70% 80%, rgba(45,15,30,0.4) 0%, transparent 60%), linear-gradient(160deg, #2A1620 0%, #1E1018 40%, #180C14 70%, #140A10 100%); }
+  body[data-theme="sakura"]::after { background: radial-gradient(ellipse at center, transparent 40%, rgba(10,3,6,0.7) 100%); }
+  body[data-theme="sakura"] { --coal: #140A10; --walnut: #3A1828; --walnut-dark: #2A1220; --walnut-deeper: #1E0C18; --parchment: #E8D0D8; --parchment-dim: #C8A0B0; --parchment-dark: #A07888; --gold: #D08898; --gold-bright: #E8A8B8; --gold-dim: #A06070; --amber: #C87888; --cream: #F8EEF2; --ring-stain: rgba(200,120,150,0.08); --glow: rgba(208,136,152,0.15); }
+  body[data-theme="sakura"] .board-felt { background: linear-gradient(135deg, #1E1018, #180C14, #140A10); }
+  body[data-theme="sakura"] .cell { background: rgba(50,20,32,0.35); border-color: rgba(80,35,55,0.15); }
+  body[data-theme="sakura"] .cell.empty { background: rgba(50,20,32,0.2); }
+  body[data-theme="sakura"] .cell.number { background: linear-gradient(145deg, #4A2838, #3E2030); }
+  body[data-theme="sakura"] .cell.number.selected { background: linear-gradient(145deg, #5A3448, #4E2C3E); }
+  body[data-theme="sakura"] .cell.number.result-glow { background: linear-gradient(145deg, #552E42, #4A2838); border-color: rgba(208,136,152,0.5); }
+  body[data-theme="sakura"] .cell.blank { background: rgba(30,12,24,0.5); border-color: rgba(180,120,200,0.15); }
+  body[data-theme="sakura"] .ring-stain, body[data-theme="sakura"] .ring-stain-2 { border-color: rgba(200,120,150,0.06); }
+  body[data-theme="sakura"] .score-box { background: linear-gradient(145deg, rgba(58,24,40,0.6), rgba(42,18,32,0.8)); }
+  body[data-theme="sakura"] .progress-fill { background: linear-gradient(90deg, #A06070, #D08898, #E8A8B8); }
+  body[data-theme="sakura"] .overlay-card, body[data-theme="sakura"] .theme-picker-card { background: linear-gradient(155deg, #3A1828, #2A1220); }
+  body[data-theme="sakura"] .history-box { background: linear-gradient(145deg, rgba(42,18,32,0.85), rgba(30,12,24,0.9)); }
+
+  /* === THEME: EMERALD LOUNGE === */
+  body[data-theme="emerald"]::before { background: repeating-linear-gradient(2deg, transparent, transparent 8px, rgba(20,60,30,0.12) 8px, rgba(20,60,30,0.12) 9px), repeating-linear-gradient(178deg, transparent, transparent 14px, rgba(25,70,40,0.06) 14px, rgba(25,70,40,0.06) 15px), radial-gradient(ellipse at 30% 20%, rgba(20,60,30,0.3) 0%, transparent 60%), radial-gradient(ellipse at 70% 80%, rgba(10,40,20,0.4) 0%, transparent 60%), linear-gradient(160deg, #142816 0%, #0E200E 40%, #0A180A 70%, #081408 100%); }
+  body[data-theme="emerald"]::after { background: radial-gradient(ellipse at center, transparent 40%, rgba(3,8,3,0.7) 100%); }
+  body[data-theme="emerald"] { --coal: #081408; --walnut: #1A3820; --walnut-dark: #142A18; --walnut-deeper: #0E2010; --parchment: #D0E0D0; --parchment-dim: #A0C0A0; --parchment-dark: #688868; --gold: #B0A060; --gold-bright: #D0C080; --gold-dim: #807040; --amber: #A09050; --cream: #F0F5E8; --ring-stain: rgba(140,160,80,0.08); --glow: rgba(176,160,96,0.15); }
+  body[data-theme="emerald"] .board-felt { background: linear-gradient(135deg, #0E1C0E, #0A160A, #081208); }
+  body[data-theme="emerald"] .cell { background: rgba(20,50,25,0.35); border-color: rgba(35,80,40,0.15); }
+  body[data-theme="emerald"] .cell.empty { background: rgba(20,50,25,0.2); }
+  body[data-theme="emerald"] .cell.number { background: linear-gradient(145deg, #254830, #1E3828); }
+  body[data-theme="emerald"] .cell.number.selected { background: linear-gradient(145deg, #305838, #285030); }
+  body[data-theme="emerald"] .cell.number.result-glow { background: linear-gradient(145deg, #2E5032, #264828); border-color: rgba(176,160,96,0.5); }
+  body[data-theme="emerald"] .cell.blank { background: rgba(12,30,15,0.5); border-color: rgba(120,180,120,0.15); }
+  body[data-theme="emerald"] .ring-stain, body[data-theme="emerald"] .ring-stain-2 { border-color: rgba(140,160,80,0.06); }
+  body[data-theme="emerald"] .score-box { background: linear-gradient(145deg, rgba(26,56,32,0.6), rgba(20,42,24,0.8)); }
+  body[data-theme="emerald"] .progress-fill { background: linear-gradient(90deg, #807040, #B0A060, #D0C080); }
+  body[data-theme="emerald"] .overlay-card, body[data-theme="emerald"] .theme-picker-card { background: linear-gradient(155deg, #1A3820, #142A18); }
+  body[data-theme="emerald"] .history-box { background: linear-gradient(145deg, rgba(20,42,24,0.85), rgba(14,32,16,0.9)); }
+
+  /* === THEME: GILDED EPOCH (Premium) === */
+  body[data-theme="gilded"]::before { background: repeating-linear-gradient(45deg, transparent, transparent 12px, rgba(201,168,76,0.03) 12px, rgba(201,168,76,0.03) 13px), repeating-linear-gradient(-45deg, transparent, transparent 12px, rgba(201,168,76,0.02) 12px, rgba(201,168,76,0.02) 13px), radial-gradient(ellipse at 50% 0%, rgba(201,168,76,0.08) 0%, transparent 50%), linear-gradient(180deg, #0C0C0C 0%, #080808 40%, #050505 70%, #030303 100%); }
+  body[data-theme="gilded"]::after { background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.6) 100%); }
+  body[data-theme="gilded"] { --coal: #030303; --walnut: #1A1508; --walnut-dark: #12100A; --walnut-deeper: #0A0A06; --parchment: #E8DCC0; --parchment-dim: #C8B898; --parchment-dark: #988860; --gold: #D4AF37; --gold-bright: #F0D060; --gold-dim: #A08828; --amber: #E0B830; --cream: #FFF8E0; --ring-stain: rgba(212,175,55,0.06); --glow: rgba(212,175,55,0.2); }
+  body[data-theme="gilded"] .board-frame { border-color: rgba(212,175,55,0.25); box-shadow: 0 8px 32px rgba(0,0,0,0.7), 0 0 40px rgba(212,175,55,0.06), inset 0 1px 0 rgba(212,175,55,0.15), inset 0 -1px 0 rgba(0,0,0,0.5); }
+  body[data-theme="gilded"] .board-felt { background: linear-gradient(135deg, #0E0E08, #0A0A06, #080804); }
+  body[data-theme="gilded"] .cell { background: rgba(25,22,10,0.5); border-color: rgba(212,175,55,0.08); }
+  body[data-theme="gilded"] .cell.empty { background: rgba(20,18,8,0.3); }
+  body[data-theme="gilded"] .cell.number { background: linear-gradient(145deg, #1E1A0E, #161208); border-color: rgba(212,175,55,0.12); box-shadow: 0 2px 4px rgba(0,0,0,0.5), inset 0 1px 0 rgba(212,175,55,0.08); }
+  body[data-theme="gilded"] .cell.number:hover { border-color: rgba(212,175,55,0.35); box-shadow: 0 0 16px rgba(212,175,55,0.15); }
+  body[data-theme="gilded"] .cell.number .tile-text { color: #FFF0C8; text-shadow: 0 0 8px rgba(240,208,96,0.25), 0 1px 3px rgba(0,0,0,0.8); }
+  body[data-theme="gilded"] .cell.number.selected { background: linear-gradient(145deg, #2A2410, #22200E); border-color: #D4AF37; box-shadow: 0 0 0 2px rgba(212,175,55,0.3), 0 0 20px rgba(212,175,55,0.2); }
+  body[data-theme="gilded"] .cell.number.result-glow { background: linear-gradient(145deg, #252010, #1E1A0C); border-color: rgba(240,208,96,0.5); }
+  body[data-theme="gilded"] .cell.blank { background: rgba(10,10,5,0.6); border-color: rgba(212,175,55,0.1); }
+  body[data-theme="gilded"] .cell.op { box-shadow: 0 2px 6px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.04); }
+  body[data-theme="gilded"] .ring-stain, body[data-theme="gilded"] .ring-stain-2 { border-color: rgba(212,175,55,0.04); }
+  body[data-theme="gilded"] .score-box { background: linear-gradient(145deg, rgba(26,21,8,0.8), rgba(18,16,10,0.9)); border-color: rgba(212,175,55,0.2); }
+  body[data-theme="gilded"] .progress-fill { background: linear-gradient(90deg, #A08828, #D4AF37, #F0D060); box-shadow: 0 0 12px rgba(212,175,55,0.4); }
+  body[data-theme="gilded"] .overlay-card, body[data-theme="gilded"] .theme-picker-card { background: linear-gradient(155deg, #141008, #0E0C06); border-color: rgba(212,175,55,0.25); }
+  body[data-theme="gilded"] .history-box { background: linear-gradient(145deg, rgba(18,16,10,0.9), rgba(10,8,4,0.95)); }
+  body[data-theme="gilded"] .logo-title { text-shadow: 0 2px 12px rgba(212,175,55,0.5), 0 0 40px rgba(212,175,55,0.15); }
+  /* Art deco corner accents */
+  body[data-theme="gilded"] .board-frame::before { content: ''; position: absolute; top: -1px; left: -1px; right: -1px; bottom: -1px; border-radius: 10px; background: repeating-linear-gradient(45deg, transparent, transparent 18px, rgba(212,175,55,0.04) 18px, rgba(212,175,55,0.04) 19px); pointer-events: none; z-index: 0; }
+  /* Gold particle shimmer */
+  @keyframes gold-drift { 0% { transform: translateY(0) rotate(0deg); opacity: 0; } 20% { opacity: 1; } 80% { opacity: 1; } 100% { transform: translateY(-60px) rotate(180deg); opacity: 0; } }
+  body[data-theme="gilded"] .board-frame::after { content: '✦ ✧ ✦ ✧ ✦'; position: absolute; bottom: 100%; left: 0; right: 0; text-align: center; font-size: 8px; letter-spacing: 12px; color: rgba(212,175,55,0.2); animation: gold-drift 4s ease-in-out infinite; pointer-events: none; z-index: 1; }
+  body[data-theme="gilded"] .btn { border-color: rgba(212,175,55,0.2); }
+  body[data-theme="gilded"] .btn:hover { color: #F0D060; border-color: rgba(212,175,55,0.5); box-shadow: 0 0 16px rgba(212,175,55,0.15); }
+  body[data-theme="gilded"] .lu-btn { background: linear-gradient(145deg, #F0D060, #D4AF37, #A08828); color: #030303; }
+  body[data-theme="gilded"] .info-div { background: linear-gradient(90deg, transparent, rgba(212,175,55,0.3), transparent); }
+
   .footer { padding: 10px; font-size: 10px; color: rgba(158,142,118,0.3); letter-spacing: 2px; text-transform: uppercase; font-family: 'Cormorant Garamond', serif; z-index: 10; }
 </style>
 </head>
@@ -199,6 +307,7 @@
 <div class="controls">
   <button class="btn" id="btn-help">How to Play</button>
   <button class="btn" id="btn-history">History</button>
+  <button class="btn" id="btn-themes">Themes</button>
   <button class="btn" id="btn-new">Restart</button>
 </div>
 
@@ -241,9 +350,13 @@
       <div class="lu-stat"><div class="sn" id="go-lv">1</div><div class="sl">Level</div></div>
       <div class="lu-stat"><div class="sn" id="go-mv">0</div><div class="sl">Moves</div></div>
     </div>
+    <div class="share-card-preview" id="card-preview"></div>
     <button class="lu-btn" id="btn-go">Play Again</button>
+    <button class="share-btn" id="btn-share">Share Results</button>
   </div>
 </div>
+
+<div class="share-toast" id="share-toast">Copied to clipboard!</div>
 
 <!-- Level Up -->
 <div class="overlay" id="ov-lu">
@@ -256,6 +369,41 @@
       <div class="lu-stat"><div class="sn" id="lu-mv">0</div><div class="sl">Moves</div></div>
     </div>
     <button class="lu-btn" id="btn-lu">Continue</button>
+  </div>
+</div>
+
+<!-- Theme Picker -->
+<div class="overlay" id="ov-themes">
+  <div class="overlay-card theme-picker-card">
+    <h2>Choose Your Table</h2>
+    <div class="theme-grid">
+      <button class="theme-swatch" data-theme="academia" onclick="setTheme('academia')">
+        <div class="swatch-preview academia-preview"></div>
+        <div class="swatch-name">Dark Academia</div>
+        <div class="swatch-desc">Walnut & gold</div>
+      </button>
+      <button class="theme-swatch" data-theme="ocean" onclick="setTheme('ocean')">
+        <div class="swatch-preview ocean-preview"></div>
+        <div class="swatch-name">Ocean Abyss</div>
+        <div class="swatch-desc">Navy & pearl</div>
+      </button>
+      <button class="theme-swatch" data-theme="sakura" onclick="setTheme('sakura')">
+        <div class="swatch-preview sakura-preview"></div>
+        <div class="swatch-name">Sakura Dusk</div>
+        <div class="swatch-desc">Rose & plum</div>
+      </button>
+      <button class="theme-swatch" data-theme="emerald" onclick="setTheme('emerald')">
+        <div class="swatch-preview emerald-preview"></div>
+        <div class="swatch-name">Emerald Lounge</div>
+        <div class="swatch-desc">Forest & brass</div>
+      </button>
+      <button class="theme-swatch premium-swatch" data-theme="gilded" onclick="setTheme('gilded')">
+        <div class="swatch-preview gilded-preview"><span class="premium-badge">★ PREMIUM</span></div>
+        <div class="swatch-name">Gilded Epoch</div>
+        <div class="swatch-desc">Art Deco & 24k gold</div>
+      </button>
+    </div>
+    <p class="overlay-hint">Tap anywhere outside to close</p>
   </div>
 </div>
 
@@ -509,6 +657,7 @@ function showGameOver(){
   document.getElementById('go-lv').textContent=S.level;
   document.getElementById('go-mv').textContent=S.moves;
   document.getElementById('ov-go').classList.add('active');
+  showShareCard();
 }
 
 function showLU(){
@@ -531,6 +680,193 @@ document.getElementById('btn-history').onclick=()=>{
   const w=document.getElementById('history-wrap'), b=document.getElementById('btn-history');
   w.classList.toggle('visible'); b.classList.toggle('active-toggle');
 };
+
+function generateResultsCard(){
+  const W=600, H=400;
+  const canvas=document.createElement('canvas');
+  canvas.width=W; canvas.height=H;
+  const ctx=canvas.getContext('2d');
+
+  // Background — walnut wood gradient
+  const bg=ctx.createLinearGradient(0,0,W,H);
+  bg.addColorStop(0,'#2E1B10'); bg.addColorStop(0.4,'#231409'); bg.addColorStop(1,'#1A1008');
+  ctx.fillStyle=bg; ctx.fillRect(0,0,W,H);
+
+  // Subtle wood grain lines
+  ctx.strokeStyle='rgba(60,35,20,0.15)'; ctx.lineWidth=1;
+  for(let y=0;y<H;y+=9){ ctx.beginPath(); ctx.moveTo(0,y+Math.sin(y*0.05)*3); ctx.lineTo(W,y+Math.sin(y*0.05+2)*3); ctx.stroke(); }
+
+  // Vignette
+  const vig=ctx.createRadialGradient(W/2,H/2,W*0.25,W/2,H/2,W*0.7);
+  vig.addColorStop(0,'transparent'); vig.addColorStop(1,'rgba(5,3,1,0.5)');
+  ctx.fillStyle=vig; ctx.fillRect(0,0,W,H);
+
+  // Border
+  ctx.strokeStyle='rgba(201,168,76,0.2)'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.roundRect(8,8,W-16,H-16,10); ctx.stroke();
+
+  // Inner border
+  ctx.strokeStyle='rgba(201,168,76,0.08)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.roundRect(14,14,W-28,H-28,8); ctx.stroke();
+
+  // Glass ring stain decoration
+  ctx.strokeStyle='rgba(180,150,100,0.06)'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.arc(W-70,70,45,0,Math.PI*2); ctx.stroke();
+
+  // Logo — "Mod2"
+  ctx.fillStyle='#C9A84C'; ctx.font='900 48px Playfair Display, serif'; ctx.textAlign='left';
+  ctx.shadowColor='rgba(201,168,76,0.3)'; ctx.shadowBlur=12;
+  ctx.fillText('Mod2',36,68);
+  ctx.shadowBlur=0;
+
+  // Subtitle
+  ctx.fillStyle='#9E8E76'; ctx.font='italic 300 13px Cormorant Garamond, serif';
+  ctx.fillText('EVEN GAINS, ODD PAINS',38,88);
+
+  // Divider line
+  const divY=105;
+  const lg=ctx.createLinearGradient(36,divY,W-36,divY);
+  lg.addColorStop(0,'transparent'); lg.addColorStop(0.2,'rgba(201,168,76,0.3)'); lg.addColorStop(0.8,'rgba(201,168,76,0.3)'); lg.addColorStop(1,'transparent');
+  ctx.strokeStyle=lg; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(36,divY); ctx.lineTo(W-36,divY); ctx.stroke();
+
+  // Stats
+  const statY=155;
+  const stats=[
+    {label:'LEVEL',value:String(S.level)},
+    {label:'SCORE',value:String(S.score)},
+    {label:'MOVES',value:String(S.moves)},
+    {label:'BEST',value:String(S.best)}
+  ];
+  const statW=W/stats.length;
+  stats.forEach((s,i)=>{
+    const x=statW*i+statW/2;
+    ctx.fillStyle='#F5F0E6'; ctx.font='700 36px Playfair Display, serif'; ctx.textAlign='center';
+    ctx.fillText(s.value,x,statY);
+    ctx.fillStyle='#9E8E76'; ctx.font='600 10px Cormorant Garamond, serif';
+    ctx.fillText(s.label,x,statY+18);
+  });
+
+  // Operation history grid — colored dots
+  const gridTop=200, gridLeft=36, gridRight=W-36;
+  const gridW=gridRight-gridLeft;
+  const dotSize=8, dotGap=4;
+  const dotsPerRow=Math.floor(gridW/(dotSize+dotGap));
+  const hist=S.history;
+
+  if(hist.length>0){
+    ctx.fillStyle='#9E8E76'; ctx.font='italic 11px Cormorant Garamond, serif'; ctx.textAlign='left';
+    ctx.fillText('Operation history',gridLeft,gridTop-6);
+
+    hist.forEach((h,i)=>{
+      const col=i%dotsPerRow, row=Math.floor(i/dotsPerRow);
+      const x=gridLeft+col*(dotSize+dotGap)+dotSize/2;
+      const y=gridTop+8+row*(dotSize+dotGap)+dotSize/2;
+      if(y>H-50) return;
+      ctx.beginPath(); ctx.arc(x,y,dotSize/2,0,Math.PI*2);
+      if(h.kind==='even') ctx.fillStyle='#5B9BD5';
+      else if(h.kind==='odd') ctx.fillStyle='#D55B5B';
+      else ctx.fillStyle='#9B6BD5';
+      ctx.fill();
+    });
+  }
+
+  // Legend
+  const legY=H-46;
+  ctx.font='11px Cormorant Garamond, serif'; ctx.textAlign='center';
+  const even=hist.filter(h=>h.kind==='even').length;
+  const odd=hist.filter(h=>h.kind==='odd').length;
+  const zero=hist.filter(h=>h.kind==='zero').length;
+  ctx.fillStyle='#5B9BD5'; ctx.fillText(`● ${even} even`,W/2-80,legY);
+  ctx.fillStyle='#D55B5B'; ctx.fillText(`● ${odd} odd`,W/2,legY);
+  ctx.fillStyle='#9B6BD5'; ctx.fillText(`● ${zero} zero`,W/2+80,legY);
+
+  // Footer
+  ctx.fillStyle='rgba(158,142,118,0.4)'; ctx.font='600 11px Cormorant Garamond, serif'; ctx.textAlign='center';
+  ctx.fillText('Can you beat my score?  •  Play Mod2',W/2,H-18);
+
+  return canvas;
+}
+
+function showShareCard(){
+  const canvas=generateResultsCard();
+  const preview=document.getElementById('card-preview');
+  preview.innerHTML='';
+  preview.appendChild(canvas);
+}
+
+async function shareResults(){
+  const canvas=generateResultsCard();
+  const toast=document.getElementById('share-toast');
+
+  // Build text fallback
+  const even=S.history.filter(h=>h.kind==='even').length;
+  const odd=S.history.filter(h=>h.kind==='odd').length;
+  const zero=S.history.filter(h=>h.kind==='zero').length;
+  const grid=S.history.map(h=>h.kind==='even'?'🟦':h.kind==='odd'?'🟥':'🟪');
+  const rows=[]; for(let i=0;i<grid.length;i+=10) rows.push(grid.slice(i,i+10).join(''));
+  const text=`Mod2 — Level ${S.level} | Score: ${S.score} | Moves: ${S.moves}\n${rows.join('\n')}\n${even} even · ${odd} odd · ${zero} zero\nCan you beat me?`;
+
+  // Try Web Share API with image
+  try {
+    const blob=await new Promise(r=>canvas.toBlob(r,'image/png'));
+    const file=new File([blob],'mod2-results.png',{type:'image/png'});
+    if(navigator.canShare&&navigator.canShare({files:[file]})){
+      await navigator.share({text:text,files:[file]});
+      return;
+    }
+  } catch(e){}
+
+  // Try clipboard with image
+  try {
+    const blob=await new Promise(r=>canvas.toBlob(r,'image/png'));
+    await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);
+    toast.textContent='Results image copied to clipboard!';
+    toast.classList.add('show');
+    setTimeout(()=>toast.classList.remove('show'),2500);
+    return;
+  } catch(e){}
+
+  // Fallback: copy text to clipboard
+  try {
+    await navigator.clipboard.writeText(text);
+    toast.textContent='Results copied to clipboard!';
+    toast.classList.add('show');
+    setTimeout(()=>toast.classList.remove('show'),2500);
+    return;
+  } catch(e){}
+
+  // Last resort: download the image
+  const url=canvas.toDataURL('image/png');
+  const a=document.createElement('a');
+  a.href=url; a.download='mod2-results.png'; a.click();
+  toast.textContent='Results card downloaded!';
+  toast.classList.add('show');
+  setTimeout(()=>toast.classList.remove('show'),2500);
+}
+
+document.getElementById('btn-share').onclick=shareResults;
+
+// Theme system
+let currentTheme='academia';
+function setTheme(name){
+  currentTheme=name;
+  if(name==='academia') document.body.removeAttribute('data-theme');
+  else document.body.setAttribute('data-theme',name);
+  // Update active swatch
+  document.querySelectorAll('.theme-swatch').forEach(s=>{
+    s.classList.toggle('active',s.getAttribute('data-theme')===name);
+  });
+}
+document.getElementById('btn-themes').onclick=()=>{
+  document.querySelectorAll('.theme-swatch').forEach(s=>{
+    s.classList.toggle('active',s.getAttribute('data-theme')===currentTheme);
+  });
+  document.getElementById('ov-themes').classList.add('active');
+};
+document.getElementById('ov-themes').addEventListener('click',(e)=>{
+  if(e.target.id==='ov-themes') document.getElementById('ov-themes').classList.remove('active');
+});
 
 initLvl(1);
 </script>
